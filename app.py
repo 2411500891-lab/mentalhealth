@@ -1,3 +1,14 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="Mental Health Dashboard",
+    page_icon="🧠",
+    layout="wide"
+)
+
+st.title("🧠 Mental Health Gen Z Dashboard")
+st.write("Tes tampil")
+
 """
 data_generator.py
 ==================
