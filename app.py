@@ -277,10 +277,6 @@ TOPIC_LABELS = {
     2: "Gangguan Kecemasan (Anxiety)",
 }
 
-CRISIS_RESOURCES = """
-📞 **SEJIWA (Kemenkes):** 119 ext 8  |  📞 **Into The Light:** intothelightid.org  |  📞 **Yayasan Pulih:** (021) 78842580
-"""
-
 # ============================================================
 # PREPROCESSING
 # ============================================================
