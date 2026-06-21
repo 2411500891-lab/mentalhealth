@@ -817,16 +817,13 @@ with st.sidebar:
     st.divider()
     st.markdown("### ⚙️ Parameter Analisis")
 
-    n_topics = 3
-    n_clusters = 3
+    n_topics = st.slider("Jumlah Topik LDA (K):", 2, 6, 3)
+    n_clusters = st.slider("Jumlah Klaster K-Means:", 2, 6, 3)
 
-    st.info("""
-    Jumlah topik & klaster dikunci menjadi 3
-    sesuai brief dosen:
-
-    • Tekanan Akademik
-    • Masalah Keluarga
-    • Finansial
+    st.caption("""
+    💡 Klaster akar masalah (leksikon) tetap mengikuti 3 kategori sesuai brief dosen
+    — Tekanan Akademik, Masalah Keluarga, Finansial — terlepas dari nilai slider di atas.
+    Slider ini khusus mengatur jumlah topik LDA & klaster K-Means (metode lanjutan).
     """)
 
     st.divider()
