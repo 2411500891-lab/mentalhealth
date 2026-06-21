@@ -50,7 +50,7 @@ C_PEACH       = "#FFD9A0"   # risiko sedang
 C_SOFTRED     = "#F4A6A6"   # butuh pertolongan segera / risiko tinggi
 C_TEXT        = "#5C4150"
 
-PASTEL_SEQ = [C_ACCENT, C_MINT, C_PEACH, C_ACCENT_DUST, C_SOFTRED, C_ACCENT_LT]
+PASTEL_SEQ = [C_ACCENT, C_ACCENT_DUST, C_ACCENT_LT, "#F08FB4", "#D97A9E", "#FBD6E4"]
 PASTEL_SCALE = [[0.0, C_BG], [0.5, C_ACCENT_LT], [1.0, C_ACCENT_DUST]]
 
 # Label resmi sesuai instruksi dosen: klasifikasi BINER
@@ -837,9 +837,6 @@ with st.sidebar:
                "• Klasifikasi: Butuh Pertolongan Segera vs Curhat Ringan\n"
                "• Klasterisasi & Trending Topic: akar masalah (akademik, keluarga, finansial)\n"
                "• SNA: jaringan akun pendukung (support system)")
-    st.divider()
-    st.markdown("### 🆘 Krisis?")
-    st.caption(CRISIS_RESOURCES)
 
 # ============================================================
 # MAIN CONTENT
@@ -1026,7 +1023,7 @@ if uploaded_file:
             fig_funnel.add_trace(go.Bar(x=stats_df["Tahap"], y=stats_df["Total Kata"],
                                          name="Total Kata", marker_color=C_ACCENT))
             fig_funnel.add_trace(go.Bar(x=stats_df["Tahap"], y=stats_df["Kata Unik"],
-                                         name="Kata Unik", marker_color=C_MINT))
+                                         name="Kata Unik", marker_color=C_ACCENT_LT))
             fig_funnel.update_layout(**PLOTLY_LAYOUT, barmode="group", xaxis_title="", yaxis_title="Jumlah Kata")
             st.plotly_chart(fig_funnel, use_container_width=True)
 
@@ -1057,7 +1054,7 @@ if uploaded_file:
             fig_wc_len.update_layout(**PLOTLY_LAYOUT, xaxis_title="Jumlah Kata", yaxis_title="Frekuensi")
             st.plotly_chart(fig_wc_len, use_container_width=True)
         with c2:
-            fig_ch_len = px.histogram(df, x="jumlah_karakter", nbins=30, color_discrete_sequence=[C_MINT])
+            fig_ch_len = px.histogram(df, x="jumlah_karakter", nbins=30, color_discrete_sequence=[C_ACCENT_DUST])
             fig_ch_len.update_layout(**PLOTLY_LAYOUT, xaxis_title="Jumlah Karakter", yaxis_title="Frekuensi")
             st.plotly_chart(fig_ch_len, use_container_width=True)
 
@@ -1166,7 +1163,7 @@ if uploaded_file:
     # -------- TAB 3: KLASTERISASI & TRENDING TOPIC --------
     with tab3:
         st.subheader("🧩 Klasterisasi Akar Masalah Penyebab Kecemasan")
-        st.caption("Tiga klaster utama sesuai brief: **Tekanan Akademik**, **Masalah Keluarga**, **Finansial** (ditambah 2 klaster pelengkap untuk konteks).")
+        st.caption("Tiga klaster utama sesuai brief: **Tekanan Akademik**, **Masalah Keluarga**, **Finansial**.")
 
         klaster_count = df["klaster_leksikon"].value_counts().reset_index()
         klaster_count.columns = ["Klaster", "Jumlah"]
@@ -1303,23 +1300,31 @@ if uploaded_file:
             fig_scatter.update_layout(**PLOTLY_LAYOUT)
             st.plotly_chart(fig_scatter, use_container_width=True)
 
-        st.markdown("##### Kata Dominan per Klaster (Top-5 Words)")
+        st.markdown("##### WordCloud per Klaster")
         cols_km = st.columns(n_clusters)
         for cluster_id in range(n_clusters):
             with cols_km[cluster_id]:
                 cluster_texts = df[df["kmeans_cluster"] == cluster_id]["text_preprocessed"]
                 all_words = " ".join(cluster_texts).split()
-                word_counts = Counter(all_words)
-                top_words = [w for w, _ in word_counts.most_common(5)]
                 n_docs = len(cluster_texts)
-                words_str = " · ".join(top_words) if top_words else "—"
                 st.markdown(f"""
                 <div class="mw-card">
                 <h4>Klaster {cluster_id}</h4>
                 <p style="font-size:12px;">📄 {n_docs} dokumen</p>
-                <p style="color:{C_ACCENT_DUST}; font-size:13px; line-height:1.8;">{words_str}</p>
                 </div>
                 """, unsafe_allow_html=True)
+                if all_words:
+                    wc_cluster = WordCloud(
+                        width=500, height=350, background_color="white", mode="RGB",
+                        colormap="RdPu", max_words=40,
+                    ).generate(" ".join(all_words))
+                    fig_wc_cluster, ax_wc_cluster = plt.subplots(figsize=(5, 3.5))
+                    fig_wc_cluster.patch.set_alpha(0)
+                    ax_wc_cluster.imshow(wc_cluster, interpolation="bilinear")
+                    ax_wc_cluster.axis("off")
+                    st.pyplot(fig_wc_cluster)
+                else:
+                    st.caption("Tidak cukup kata untuk WordCloud.")
 
         st.markdown("##### Crosstab: Klaster K-Means vs Label Urgensi")
         st.caption("Bukan confusion matrix klasifikasi (K-Means unsupervised) — menunjukkan sejauh mana klaster yang terbentuk selaras dengan label urgensi.")
