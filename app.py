@@ -50,7 +50,7 @@ C_PEACH       = "#FFD9A0"   # risiko sedang
 C_SOFTRED     = "#F4A6A6"   # butuh pertolongan segera / risiko tinggi
 C_TEXT        = "#5C4150"
 
-PASTEL_SEQ = [C_ACCENT, C_ACCENT_DUST, C_ACCENT_LT, "#F08FB4", "#D97A9E", "#FBD6E4"]
+PASTEL_SEQ = [C_ACCENT, C_MINT, C_PEACH, C_ACCENT_DUST, C_SOFTRED, C_ACCENT_LT]
 PASTEL_SCALE = [[0.0, C_BG], [0.5, C_ACCENT_LT], [1.0, C_ACCENT_DUST]]
 
 # Label resmi sesuai instruksi dosen: klasifikasi BINER
@@ -268,50 +268,22 @@ MILD_PHRASES = {
     "khawatir","galau","overthinking","overthink",
 }
 
-# 3 klaster utama sesuai brief dosen
+# 3 klaster utama sesuai brief dosen + 2 klaster tambahan untuk konteks lebih kaya
 CLUSTER_KEYWORDS = {
-    "Tekanan Akademik": {
-        "tugas","skripsi","ujian","dosen",
-        "kuliah","deadline","ipk",
-        "krs","sidang","praktikum",
-        "semester","kampus",
-        "magang","nilai",
-        "revisi","sks"
-    },
-    "Masalah Keluarga": {
-        "orang tua",
-        "ayah",
-        "ibu",
-        "keluarga",
-        "broken home",
-        "kdrt",
-        "cerai",
-        "tekanan keluarga",
-        "ekspektasi",
-        "berantem",
-        "dipaksa"
-    },
-    "Finansial": {
-        "uang",
-        "biaya kuliah",
-        "biaya",
-        "ekonomi",
-        "kerja",
-        "gaji",
-        "utang",
-        "beasiswa",
-        "finansial",
-        "susah cari kerja",
-        "tidak punya uang",
-        "nunggak"
-    }
+    "Tekanan Akademik": {"tugas","skripsi","ujian","dosen","kuliah","tenggat waktu","ipk","krs",
+                          "sidang","praktikum","semester","kampus","magang","nilai","revisi","sks"},
+    "Masalah Keluarga": {"orang tua","ayah","ibu","keluarga","broken home","kdrt",
+                          "cerai","dibanding bandingkan","tekanan keluarga","ekspektasi",
+                          "berantem","dipaksa"},
+    "Finansial": {"uang","biaya kuliah","biaya","ekonomi","kerja","gaji","utang","beasiswa",
+                  "finansial","susah cari kerja","tidak punya uang","nunggak"},
+    "Hubungan Sosial": {"pacar","putus","mantan","teman","lingkar pertemanan","sahabat",
+                         "dikhianati","selingkuh","toksik","dijauhin","kesepian","diabaikan",
+                         "diberi harapan palsu","manipulasi psikologis","bullying","dibully"},
+    "Kesehatan Mental Umum": {"depresi","cemas","anxiety","stress","stres","burnout","trauma",
+                               "insomnia","psikolog","psikiater","konseling","terapi","kesehatan jiwa"},
 }
-
-CORE_CLUSTERS = [
-    "Tekanan Akademik",
-    "Masalah Keluarga",
-    "Finansial"
-]
+CORE_CLUSTERS = ["Tekanan Akademik", "Masalah Keluarga", "Finansial"]
 
 SUPPORT_PHRASES = {
     "semangat","kamu kuat","gpp","gapapa","tidak apa apa","ada aku","dm aja","cerita yuk",
@@ -320,6 +292,10 @@ SUPPORT_PHRASES = {
     "boleh cerita","aku dengerin","semoga membaik","semoga lekas membaik","tetap kuat",
     "kamu pasti bisa","jangan lupa makan","jangan lupa istirahat","sehat selalu",
 }
+
+CRISIS_RESOURCES = """
+📞 **SEJIWA (Kemenkes):** 119 ext 8  |  📞 **Into The Light:** intothelightid.org  |  📞 **Yayasan Pulih:** (021) 78842580
+"""
 
 PIPELINE_STEPS = [
     ("01", "Raw Text", "Teks asli dari dataset"),
@@ -706,33 +682,6 @@ def generate_cluster_insight(df):
     bullets.append("Tiga klaster akar masalah utama Gen Z menurut brief: tekanan akademik, masalah keluarga, dan finansial — semuanya dipantau pada grafik di atas.")
     return bullets
 
-def generate_trending_topic(df):
-
-    trend = (
-        df["klaster_leksikon"]
-        .value_counts()
-        .reset_index()
-    )
-
-    trend.columns = [
-        "Klaster",
-        "Jumlah"
-    ]
-
-    fig = px.pie(
-        trend,
-        names="Klaster",
-        values="Jumlah",
-        title="Trending Penyebab Stres Gen Z",
-        hole=0.5
-    )
-
-    fig.update_layout(
-        **PLOTLY_LAYOUT
-    )
-
-    return fig
-
 def generate_lda_insight(df, topic_words, n_topics):
     dist = df["lda_topic"].value_counts(normalize=True) * 100
     dom_topic = dist.idxmax()
@@ -745,36 +694,14 @@ def generate_lda_insight(df, topic_words, n_topics):
         bullets.append(f"Topik kedua terbesar: <b>Topik {second}</b> ({', '.join(topic_words[second][:3])}) — {dist[second]:.1f}% dokumen.")
     return bullets
 
-def generate_kmeans_insight(
-        df,
-        sil,
-        n_clusters
-):
-
-    sizes = (
-        df["kmeans_cluster"]
-        .value_counts(normalize=True)
-        *100
-    )
-
+def generate_kmeans_insight(df, sil, n_clusters):
+    sizes = df["kmeans_cluster"].value_counts(normalize=True) * 100
     biggest = sizes.idxmax()
-
-    quality = (
-        "cukup baik"
-        if sil>=0.3
-        else "sedang"
-        if sil>=0.1
-        else "lemah"
-    )
-
+    quality = "cukup baik" if sil >= 0.3 else ("sedang" if sil >= 0.1 else "lemah, klaster saling tumpang tindih")
     return [
-
-        f"Klaster terbesar adalah Klaster {biggest}, mencakup {sizes.max():.1f}% data",
-
-        f"Silhouette Score = {sil:.3f} menunjukkan pemisahan klaster {quality}",
-
-        "Data dikelompokkan menjadi tiga akar masalah utama: Tekanan Akademik, Masalah Keluarga, dan Finansial"
-
+        f"Klaster terbesar adalah <b>Klaster {biggest}</b>, mencakup {sizes.max():.1f}% dari seluruh data.",
+        f"Silhouette Score sebesar <b>{sil:.3f}</b> menunjukkan pemisahan klaster yang {quality}.",
+        f"Data terbagi ke dalam <b>{n_clusters} klaster</b> berdasarkan kemiripan kata pada representasi TF-IDF + SVD.",
     ]
 
 def generate_sna_insight(G):
@@ -812,15 +739,8 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload file CSV", type=["csv"])
     st.divider()
     st.markdown("### ⚙️ Parameter Analisis")
-
     n_topics = st.slider("Jumlah Topik LDA (K):", 2, 6, 3)
     n_clusters = st.slider("Jumlah Klaster K-Means:", 2, 6, 3)
-
-    st.caption("""
-    💡 Klaster akar masalah (leksikon)
-    — Tekanan Akademik, Masalah Keluarga, Finansial —
-    """)
-
     st.divider()
     if not SASTRAWI_AVAILABLE:
         st.warning("Paket **Sastrawi** tidak terpasang — tahap stemming akan dilewati (kata dibiarkan apa adanya). Jalankan `pip install Sastrawi` untuk mengaktifkan stemming penuh.")
@@ -829,6 +749,9 @@ with st.sidebar:
                "• Klasifikasi: Butuh Pertolongan Segera vs Curhat Ringan\n"
                "• Klasterisasi & Trending Topic: akar masalah (akademik, keluarga, finansial)\n"
                "• SNA: jaringan akun pendukung (support system)")
+    st.divider()
+    st.markdown("### 🆘 Krisis? Hubungi:")
+    st.caption(CRISIS_RESOURCES)
 
 # ============================================================
 # MAIN CONTENT
@@ -944,17 +867,6 @@ if uploaded_file:
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown(
-    "### 📈 Trending Topic Penyebab Stres"
-    )
-
-    fig_trending = generate_trending_topic(df)
-
-    st.plotly_chart(
-        fig_trending,
-        use_container_width=True
-    )
-
     st.divider()
 
     # ============================================================
@@ -1015,7 +927,7 @@ if uploaded_file:
             fig_funnel.add_trace(go.Bar(x=stats_df["Tahap"], y=stats_df["Total Kata"],
                                          name="Total Kata", marker_color=C_ACCENT))
             fig_funnel.add_trace(go.Bar(x=stats_df["Tahap"], y=stats_df["Kata Unik"],
-                                         name="Kata Unik", marker_color=C_ACCENT_LT))
+                                         name="Kata Unik", marker_color=C_MINT))
             fig_funnel.update_layout(**PLOTLY_LAYOUT, barmode="group", xaxis_title="", yaxis_title="Jumlah Kata")
             st.plotly_chart(fig_funnel, use_container_width=True)
 
@@ -1046,7 +958,7 @@ if uploaded_file:
             fig_wc_len.update_layout(**PLOTLY_LAYOUT, xaxis_title="Jumlah Kata", yaxis_title="Frekuensi")
             st.plotly_chart(fig_wc_len, use_container_width=True)
         with c2:
-            fig_ch_len = px.histogram(df, x="jumlah_karakter", nbins=30, color_discrete_sequence=[C_ACCENT_DUST])
+            fig_ch_len = px.histogram(df, x="jumlah_karakter", nbins=30, color_discrete_sequence=[C_MINT])
             fig_ch_len.update_layout(**PLOTLY_LAYOUT, xaxis_title="Jumlah Karakter", yaxis_title="Frekuensi")
             st.plotly_chart(fig_ch_len, use_container_width=True)
 
@@ -1155,7 +1067,7 @@ if uploaded_file:
     # -------- TAB 3: KLASTERISASI & TRENDING TOPIC --------
     with tab3:
         st.subheader("🧩 Klasterisasi Akar Masalah Penyebab Kecemasan")
-        st.caption("Tiga klaster utama sesuai brief: **Tekanan Akademik**, **Masalah Keluarga**, **Finansial**.")
+        st.caption("Tiga klaster utama sesuai brief: **Tekanan Akademik**, **Masalah Keluarga**, **Finansial** (ditambah 2 klaster pelengkap untuk konteks).")
 
         klaster_count = df["klaster_leksikon"].value_counts().reset_index()
         klaster_count.columns = ["Klaster", "Jumlah"]
@@ -1292,31 +1204,23 @@ if uploaded_file:
             fig_scatter.update_layout(**PLOTLY_LAYOUT)
             st.plotly_chart(fig_scatter, use_container_width=True)
 
-        st.markdown("##### WordCloud per Klaster")
+        st.markdown("##### Kata Dominan per Klaster (Top-5 Words)")
         cols_km = st.columns(n_clusters)
         for cluster_id in range(n_clusters):
             with cols_km[cluster_id]:
                 cluster_texts = df[df["kmeans_cluster"] == cluster_id]["text_preprocessed"]
                 all_words = " ".join(cluster_texts).split()
+                word_counts = Counter(all_words)
+                top_words = [w for w, _ in word_counts.most_common(5)]
                 n_docs = len(cluster_texts)
+                words_str = " · ".join(top_words) if top_words else "—"
                 st.markdown(f"""
                 <div class="mw-card">
                 <h4>Klaster {cluster_id}</h4>
                 <p style="font-size:12px;">📄 {n_docs} dokumen</p>
+                <p style="color:{C_ACCENT_DUST}; font-size:13px; line-height:1.8;">{words_str}</p>
                 </div>
                 """, unsafe_allow_html=True)
-                if all_words:
-                    wc_cluster = WordCloud(
-                        width=500, height=350, background_color="white", mode="RGB",
-                        colormap="RdPu", max_words=40,
-                    ).generate(" ".join(all_words))
-                    fig_wc_cluster, ax_wc_cluster = plt.subplots(figsize=(5, 3.5))
-                    fig_wc_cluster.patch.set_alpha(0)
-                    ax_wc_cluster.imshow(wc_cluster, interpolation="bilinear")
-                    ax_wc_cluster.axis("off")
-                    st.pyplot(fig_wc_cluster)
-                else:
-                    st.caption("Tidak cukup kata untuk WordCloud.")
 
         st.markdown("##### Crosstab: Klaster K-Means vs Label Urgensi")
         st.caption("Bukan confusion matrix klasifikasi (K-Means unsupervised) — menunjukkan sejauh mana klaster yang terbentuk selaras dengan label urgensi.")
