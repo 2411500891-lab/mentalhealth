@@ -40,24 +40,23 @@ st.set_page_config(
 # ============================================================
 # DESIGN TOKENS — SOFT PASTEL PINK
 # ============================================================
-C_BG          = "#FFF9FB"
-C_CARD        = "#FFEEF3"
-C_ACCENT      = "#F7A8C4"
-C_ACCENT_LT   = "#FBC4D8"
-C_ACCENT_DUST = "#E893B5"
-C_MINT        = "#B8E3D8"   # aman / curhat ringan
-C_PEACH       = "#FFD9A0"   # risiko sedang
-C_SOFTRED     = "#F4A6A6"   # butuh pertolongan segera / risiko tinggi
-C_TEXT        = "#5C4150"
+C_BG          = "#FFF9FB"   # putih hangat keunguan
+C_CARD        = "#FFEEF3"   # card
+C_ACCENT      = "#F7A8C4"   # pink pastel utama
+C_ACCENT_LT   = "#FBC4D8"   # pink lebih muda
+C_ACCENT_DUST = "#E893B5"   # pink dusty, teks aksen
+C_MINT        = "#B8E3D8"   # positif / aman
+C_PEACH       = "#FFD9A0"   # perhatian
+C_SOFTRED     = "#F4A6A6"   # urgent (lembut)
+C_TEXT        = "#5C4150"   # plum gelap lembut
 
 PASTEL_SEQ = [C_ACCENT, C_MINT, C_PEACH, C_ACCENT_DUST, C_SOFTRED, C_ACCENT_LT]
+COLOR_MAP_URGENCY = {
+    "🚨 Darurat": C_SOFTRED,
+    "⚠️ Perlu Perhatian": C_PEACH,
+    "💬 Curhat Ringan": C_MINT,
+}
 PASTEL_SCALE = [[0.0, C_BG], [0.5, C_ACCENT_LT], [1.0, C_ACCENT_DUST]]
-
-# Label resmi sesuai instruksi dosen: klasifikasi BINER
-LABEL_URGENT = "🚨 Butuh Pertolongan Segera"
-LABEL_RINGAN = "💬 Curhat Ringan"
-COLOR_MAP_URGENCY = {LABEL_URGENT: C_SOFTRED, LABEL_RINGAN: C_MINT}
-COLOR_MAP_RISK = {"Tinggi": C_SOFTRED, "Sedang": C_PEACH, "Rendah": C_MINT}
 
 # ============================================================
 # CUSTOM CSS
@@ -70,7 +69,10 @@ html, body, [class*="css"] {{ font-family: 'Nunito', sans-serif; color: {C_TEXT}
 h1, h2, h3, h4, h5 {{ font-family: 'Fredoka', sans-serif; color: {C_TEXT}; }}
 .mw-mono {{ font-family: 'JetBrains Mono', monospace; }}
 
-.stApp {{ background: {C_BG}; color: {C_TEXT}; }}
+.stApp {{
+    background: {C_BG};
+    color: {C_TEXT};
+}}
 
 section[data-testid="stSidebar"] {{
     background: linear-gradient(180deg, #FFF3F7 0%, #FFE8EF 100%);
@@ -78,14 +80,19 @@ section[data-testid="stSidebar"] {{
 }}
 section[data-testid="stSidebar"] * {{ color: {C_TEXT} !important; }}
 
+/* Hero */
 .mw-hero {{
-    padding: 30px 34px; border-radius: 26px;
+    padding: 30px 34px;
+    border-radius: 26px;
     background: linear-gradient(120deg, {C_ACCENT_LT} 0%, #FFF3F7 55%, {C_ACCENT} 100%);
     border: 1px solid {C_ACCENT_LT};
     box-shadow: 0 12px 32px rgba(247,168,196,0.35);
     margin-bottom: 18px;
 }}
-.mw-hero h1 {{ font-size: 30px; font-weight: 700; margin: 0 0 6px 0; color: {C_TEXT}; }}
+.mw-hero h1 {{
+    font-size: 30px; font-weight: 700; margin: 0 0 6px 0;
+    color: {C_TEXT};
+}}
 .mw-hero p {{ color: {C_ACCENT_DUST}; font-size: 14.5px; margin: 0; font-weight: 600; }}
 .mw-hero .mw-eyebrow {{
     display:inline-block; font-family:'JetBrains Mono', monospace; font-size: 11px;
@@ -93,9 +100,14 @@ section[data-testid="stSidebar"] * {{ color: {C_TEXT} !important; }}
     background: rgba(255,255,255,0.55); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px;
 }}
 
+/* Glass card */
 .mw-card {{
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 20px;
-    padding: 18px 20px; height: 100%; margin-bottom: 12px;
+    background: {C_CARD};
+    border: 1px solid {C_ACCENT_LT};
+    border-radius: 20px;
+    padding: 18px 20px;
+    height: 100%;
+    margin-bottom: 12px;
 }}
 .mw-card h4 {{
     margin-top: 0; font-size: 13px; color: {C_ACCENT_DUST};
@@ -104,17 +116,26 @@ section[data-testid="stSidebar"] * {{ color: {C_TEXT} !important; }}
 .mw-card .big {{ font-size: 30px; font-weight: 700; color: {C_ACCENT_DUST}; font-family:'Fredoka',sans-serif; }}
 .mw-card p {{ color: {C_TEXT}; }}
 
+/* Insight box */
 .mw-insight {{
     background: linear-gradient(120deg, rgba(184,227,216,0.35), rgba(247,168,196,0.18));
-    border: 1px dashed {C_ACCENT_DUST}; border-radius: 18px; padding: 16px 20px; margin: 14px 0;
+    border: 1px dashed {C_ACCENT_DUST};
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin: 14px 0;
 }}
 .mw-insight h4 {{ margin-top:0; font-size:13px; color:{C_ACCENT_DUST}; text-transform:uppercase; letter-spacing:.4px; }}
 .mw-insight ul {{ margin: 6px 0 0 0; padding-left: 18px; }}
 .mw-insight li {{ font-size: 13.5px; line-height: 1.7; color: {C_TEXT}; }}
 
+/* Pipeline step card */
 .mw-step {{
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 16px;
-    padding: 14px 16px; text-align: center; height: 100%;
+    background: {C_CARD};
+    border: 1px solid {C_ACCENT_LT};
+    border-radius: 16px;
+    padding: 14px 16px;
+    text-align: center;
+    height: 100%;
 }}
 .mw-step .mw-step-no {{
     font-family:'JetBrains Mono', monospace; font-size: 11px; color:{C_ACCENT_DUST};
@@ -128,9 +149,12 @@ section[data-testid="stSidebar"] * {{ color: {C_TEXT} !important; }}
     font-family:'JetBrains Mono', monospace; font-size: 12px; color:{C_TEXT}; word-break: break-word;
 }}
 
+/* Traffic lights */
 .mw-light-wrap {{
     display: flex; align-items: center; justify-content: center; gap: 22px;
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 22px; padding: 22px;
+    background: {C_CARD};
+    border: 1px solid {C_ACCENT_LT};
+    border-radius: 22px; padding: 22px;
 }}
 .mw-light {{ width: 46px; height: 46px; border-radius: 50%; opacity: 0.18; }}
 .mw-light.on-red    {{ background: {C_SOFTRED}; opacity: 1; box-shadow: 0 0 30px 8px rgba(244,166,166,0.65); animation: pulse 1.6s infinite; }}
@@ -140,56 +164,79 @@ section[data-testid="stSidebar"] * {{ color: {C_TEXT} !important; }}
 
 .mw-status-text {{ font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 20px; color: {C_ACCENT_DUST}; text-align: center; margin-top: 10px; }}
 
+/* Alert banner */
 .mw-alert-banner {{
     border-radius: 18px; padding: 16px 20px; margin: 14px 0;
     background: linear-gradient(90deg, rgba(244,166,166,0.25), rgba(244,166,166,0.06));
-    border: 1px solid {C_SOFTRED}; font-size: 14px; line-height: 1.6; color: {C_TEXT};
+    border: 1px solid {C_SOFTRED};
+    font-size: 14px; line-height: 1.6; color: {C_TEXT};
 }}
 .mw-alert-banner b {{ color: #C9576E; }}
 
+/* Metrics */
 div[data-testid="stMetricValue"] {{ color: {C_ACCENT_DUST} !important; font-family:'JetBrains Mono', monospace !important; }}
 div[data-testid="stMetric"] {{
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 16px; padding: 10px 14px;
+    background: {C_CARD};
+    border: 1px solid {C_ACCENT_LT};
+    border-radius: 16px; padding: 10px 14px;
 }}
 div[data-testid="stMetricLabel"] p {{ color: {C_ACCENT_DUST} !important; font-weight:600; }}
 
+/* Tabs */
 .stTabs [data-baseweb="tab-list"] {{ gap: 6px; background: transparent; flex-wrap: wrap; }}
 .stTabs [data-baseweb="tab"] {{
-    background: {C_CARD}; border-radius: 14px 14px 0 0; padding: 8px 16px; color: {C_ACCENT_DUST};
-    border: 1px solid {C_ACCENT_LT}; font-family: 'Quicksand', sans-serif; font-weight: 600;
+    background: {C_CARD};
+    border-radius: 14px 14px 0 0;
+    padding: 8px 16px; color: {C_ACCENT_DUST};
+    border: 1px solid {C_ACCENT_LT};
+    font-family: 'Quicksand', sans-serif; font-weight: 600;
 }}
 .stTabs [aria-selected="true"] {{
     background: linear-gradient(90deg, {C_ACCENT}, {C_ACCENT_LT}) !important;
     color: #fff !important; border-color: {C_ACCENT} !important;
 }}
 
+/* Buttons */
 .stButton > button {{
     background: linear-gradient(135deg, {C_ACCENT}, {C_ACCENT_DUST});
     color: white; border: none; border-radius: 14px;
-    font-family: 'Fredoka', sans-serif; font-weight: 600; padding: 8px 20px; transition: all 0.2s;
+    font-family: 'Fredoka', sans-serif; font-weight: 600;
+    padding: 8px 20px; transition: all 0.2s;
 }}
 .stButton > button:hover {{
     background: linear-gradient(135deg, {C_ACCENT_DUST}, {C_ACCENT});
     transform: translateY(-1px); box-shadow: 0 4px 18px rgba(232,147,181,0.4);
 }}
 
+/* Selectbox & Multiselect */
 .stSelectbox > div > div, .stMultiSelect > div > div {{
-    background: #fff !important; border: 1px solid {C_ACCENT_LT} !important;
+    background: #fff !important;
+    border: 1px solid {C_ACCENT_LT} !important;
     border-radius: 12px !important; color: {C_TEXT} !important;
 }}
+
+/* Text area */
 .stTextArea > div > div > textarea {{
-    background: #fff !important; border: 1px solid {C_ACCENT_LT} !important;
+    background: #fff !important;
+    border: 1px solid {C_ACCENT_LT} !important;
     border-radius: 14px !important; color: {C_TEXT} !important;
 }}
+
+/* File uploader */
 [data-testid="stFileUploader"] {{
-    background: {C_CARD}; border: 1.5px dashed {C_ACCENT}; border-radius: 16px; padding: 12px;
+    background: {C_CARD};
+    border: 1.5px dashed {C_ACCENT};
+    border-radius: 16px; padding: 12px;
 }}
+
 hr {{ border-color: {C_ACCENT_LT} !important; }}
+
 [data-testid="stDataFrame"] {{ border: 1px solid {C_ACCENT_LT} !important; border-radius: 14px !important; }}
 
 .mw-footer {{
-    margin-top: 30px; padding: 18px; border-radius: 18px; background: {C_CARD};
-    border: 1px solid {C_ACCENT_LT}; font-size: 12.5px; color: {C_ACCENT_DUST}; text-align: center;
+    margin-top: 30px; padding: 18px; border-radius: 18px;
+    background: {C_CARD}; border: 1px solid {C_ACCENT_LT};
+    font-size: 12.5px; color: {C_ACCENT_DUST}; text-align: center;
 }}
 
 .mw-badge {{ display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; margin-right:6px; font-family:'Quicksand',sans-serif; }}
@@ -268,7 +315,6 @@ MILD_PHRASES = {
     "khawatir","galau","overthinking","overthink",
 }
 
-# 3 klaster utama sesuai brief dosen + 2 klaster tambahan untuk konteks lebih kaya
 CLUSTER_KEYWORDS = {
     "Tekanan Akademik": {"tugas","skripsi","ujian","dosen","kuliah","tenggat waktu","ipk","krs",
                           "sidang","praktikum","semester","kampus","magang","nilai","revisi","sks"},
@@ -283,7 +329,6 @@ CLUSTER_KEYWORDS = {
     "Kesehatan Mental Umum": {"depresi","cemas","anxiety","stress","stres","burnout","trauma",
                                "insomnia","psikolog","psikiater","konseling","terapi","kesehatan jiwa"},
 }
-CORE_CLUSTERS = ["Tekanan Akademik", "Masalah Keluarga", "Finansial"]
 
 SUPPORT_PHRASES = {
     "semangat","kamu kuat","gpp","gapapa","tidak apa apa","ada aku","dm aja","cerita yuk",
@@ -350,6 +395,7 @@ def stem_tokens(tokens, stemmer, cache):
     return out
 
 def clean_text(text):
+    """Backward-compatible single-shot cleaner (case fold + clean)."""
     if not isinstance(text, str):
         return ""
     return clean_only(case_fold(text))
@@ -359,6 +405,7 @@ def remove_stopwords(text):
 
 @st.cache_data(show_spinner=False)
 def run_full_pipeline(texts):
+    """Run every preprocessing stage on a list of texts, returning a DataFrame of stages."""
     stemmer = get_stemmer()
     stem_cache = {}
     rows = []
@@ -371,13 +418,18 @@ def run_full_pipeline(texts):
         sw = remove_stopwords_tokens(tk)
         st_ = stem_tokens(sw, stemmer, stem_cache)
         rows.append({
-            "raw": raw, "case_folded": cf, "cleaned": cl, "normalized": nm,
-            "tokenized": tk, "stopword_removed": " ".join(sw), "stemmed": " ".join(st_),
+            "raw": raw,
+            "case_folded": cf,
+            "cleaned": cl,
+            "normalized": nm,
+            "tokenized": tk,
+            "stopword_removed": " ".join(sw),
+            "stemmed": " ".join(st_),
         })
     return pd.DataFrame(rows)
 
 def preprocess(text):
-    """Preprocessing satu teks (dipakai untuk input baru di tab ML Classifier)."""
+    """Final combined preprocessing used for LDA / K-Means / ML features."""
     cf = case_fold(text if isinstance(text, str) else "")
     cl = clean_only(cf)
     nm = normalize_text(cl)
@@ -397,27 +449,21 @@ def pipeline_word_stats(pipe_df):
     return pd.DataFrame(rows)
 
 # ============================================================
-# KLASIFIKASI URGENSI (BINER sesuai instruksi dosen)
+# KLASIFIKASI URGENSI
 # ============================================================
 def score_urgency(raw_text_lower):
-    """
-    Mengembalikan klasifikasi biner: Butuh Pertolongan Segera vs Curhat Ringan,
-    plus skor & tingkat risiko (Tinggi/Sedang/Rendah) sebagai detail pendukung.
-    """
     severe = sum(1 for p in SEVERE_URGENT_PHRASES if p in raw_text_lower)
     moderate = sum(1 for p in MODERATE_URGENT_PHRASES if p in raw_text_lower)
     mild = sum(1 for p in MILD_PHRASES if p in raw_text_lower)
     score = severe * 3 + moderate * 1.5 + mild * 0.5
 
     if severe >= 1 or score >= 4:
-        risk_level = "Tinggi"
+        label = "🚨 Darurat"
     elif moderate >= 1 or score >= 1.5:
-        risk_level = "Sedang"
+        label = "⚠️ Perlu Perhatian"
     else:
-        risk_level = "Rendah"
-
-    label = LABEL_URGENT if risk_level in ("Tinggi", "Sedang") else LABEL_RINGAN
-    return label, score, severe, moderate, mild, risk_level
+        label = "💬 Curhat Ringan"
+    return label, score, severe, moderate, mild
 
 def detect_cluster(raw_text_lower):
     scores = {c: sum(1 for kw in kws if kw in raw_text_lower) for c, kws in CLUSTER_KEYWORDS.items()}
@@ -451,7 +497,8 @@ def detect_timestamp_col(df):
 def detect_engagement_cols(df):
     candidates = ["like_count","likes","favorite_count","retweet_count","retweets",
                   "reply_count","replies","quote_count","views","view_count"]
-    return [c for c in df.columns if c.lower().strip() in candidates]
+    found = [c for c in df.columns if c.lower().strip() in candidates]
+    return found
 
 # ============================================================
 # LDA TOPIC MODELING
@@ -467,6 +514,7 @@ def run_lda(texts, n_topics=3):
 
     doc_topic = lda_model.transform(X_bow)
     dominant_topics = doc_topic.argmax(axis=1)
+
     log_lik = lda_model.score(X_bow)
     perplexity = lda_model.perplexity(X_bow)
 
@@ -482,30 +530,36 @@ def run_lda(texts, n_topics=3):
 # ============================================================
 @st.cache_data(show_spinner=False)
 def run_kmeans(texts, k=3):
+    n_docs = len(texts)
+    k = max(1, min(k, n_docs))  # k tidak boleh melebihi jumlah dokumen
+
     vectorizer = TfidfVectorizer(max_features=1000)
     X_tfidf = vectorizer.fit_transform(texts)
 
-    svd = TruncatedSVD(n_components=2, random_state=42)
+    n_svd_components = max(1, min(2, n_docs - 1, X_tfidf.shape[1] - 1))
+    svd = TruncatedSVD(n_components=n_svd_components, random_state=42)
     X_2d = svd.fit_transform(X_tfidf)
 
     wcss = []
-    k_range = range(2, min(7, len(texts)))
+    k_range = range(2, max(2, min(7, n_docs)))
     for ki in k_range:
+        if ki > n_docs:
+            break
         km = KMeans(n_clusters=ki, random_state=42, n_init=10)
         km.fit(X_2d)
         wcss.append(km.inertia_)
 
-    km_final = KMeans(n_clusters=k, random_state=42, n_init=10)
+    km_final = KMeans(n_clusters=k, random_state=42, n_init=min(10, n_docs))
     labels = km_final.fit_predict(X_2d)
 
-    sil = silhouette_score(X_2d, labels) if len(set(labels)) > 1 else 0
+    sil = silhouette_score(X_2d, labels) if len(set(labels)) > 1 and n_docs > len(set(labels)) else 0
     dbi = davies_bouldin_score(X_2d, labels) if len(set(labels)) > 1 else 0
     chi = calinski_harabasz_score(X_2d, labels) if len(set(labels)) > 1 else 0
 
     return labels, X_2d, km_final, list(k_range), wcss, sil, dbi, chi
 
 # ============================================================
-# ML CLASSIFIER (TF-IDF + Logistic Regression, label = urgensi biner)
+# ML CLASSIFIER (TF-IDF + Logistic Regression, label = urgensi leksikon)
 # ============================================================
 @st.cache_data(show_spinner=False)
 def train_ml_classifier(texts, labels):
@@ -513,7 +567,7 @@ def train_ml_classifier(texts, labels):
     X = vectorizer.fit_transform(texts)
     classes = sorted(set(labels))
 
-    can_stratify = len(classes) > 1 and all(labels.count(c) >= 2 for c in classes)
+    can_stratify = all(labels.count(c) >= 2 for c in classes) and len(classes) > 1
     try:
         X_train, X_test, y_train, y_test = train_test_split(
             X, labels, test_size=0.25, random_state=42,
@@ -526,20 +580,12 @@ def train_ml_classifier(texts, labels):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    # labels=classes WAJIB di-pass agar semua kelas selalu muncul di report,
-    # walau salah satu kelas kebetulan tidak terambil di test split (mencegah KeyError).
-    report = classification_report(y_test, y_pred, labels=classes, output_dict=True, zero_division=0)
+    report = classification_report(y_test, y_pred, output_dict=True, zero_division=0)
     cm = confusion_matrix(y_test, y_pred, labels=classes)
     acc = accuracy_score(y_test, y_pred)
-    f1m = f1_score(y_test, y_pred, average="macro", labels=classes, zero_division=0)
+    f1m = f1_score(y_test, y_pred, average="macro", zero_division=0)
 
     return model, vectorizer, classes, report, cm, acc, f1m, len(y_test)
-
-def report_to_dataframe(report, classes):
-    """Ambil hanya baris kelas + macro/weighted avg (skip key 'accuracy' yang scalar,
-    supaya tidak memicu error saat dikonversi ke DataFrame)."""
-    rows = {k: v for k, v in report.items() if k in classes or k in ("macro avg", "weighted avg")}
-    return pd.DataFrame(rows).T.round(3)
 
 # ============================================================
 # SNA
@@ -649,8 +695,10 @@ def plot_network(G, max_nodes=60):
 # PLOTLY THEME HELPER
 # ============================================================
 PLOTLY_LAYOUT = dict(
-    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-    font_color=C_TEXT, font_family="Nunito",
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font_color=C_TEXT,
+    font_family="Nunito",
 )
 
 # ============================================================
@@ -658,28 +706,27 @@ PLOTLY_LAYOUT = dict(
 # ============================================================
 def insight_card(title, bullets):
     items = "".join(f"<li>{b}</li>" for b in bullets)
-    st.markdown(f"""<div class="mw-insight"><h4>💡 {title}</h4><ul>{items}</ul></div>""", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="mw-insight">
+    <h4>💡 {title}</h4>
+    <ul>{items}</ul>
+    </div>
+    """, unsafe_allow_html=True)
 
 def generate_urgency_insight(df):
     total = len(df)
-    n_urgent = (df["urgensi"] == LABEL_URGENT).sum()
-    n_tinggi = (df["tingkat_risiko"] == "Tinggi").sum()
-    pct_urgent = n_urgent / total * 100 if total else 0
+    n_darurat = (df["urgensi"] == "🚨 Darurat").sum()
+    n_perhatian = (df["urgensi"] == "⚠️ Perlu Perhatian").sum()
+    pct_darurat = n_darurat / total * 100 if total else 0
     top_cluster = df["klaster_leksikon"].value_counts().idxmax() if total else "-"
     top_cluster_pct = df["klaster_leksikon"].value_counts(normalize=True).max() * 100 if total else 0
     support_rate = df["is_support"].mean() * 100 if total else 0
-    return [
-        f"<b>{pct_urgent:.1f}%</b> dari seluruh curhatan terklasifikasi <b>{LABEL_URGENT}</b> ({int(n_urgent)} dari {total} entri).",
-        f"Dari jumlah tersebut, <b>{int(n_tinggi)}</b> entri berada di tingkat risiko <b>Tinggi</b> — prioritas tertinggi untuk ditindaklanjuti.",
-        f"Akar masalah paling dominan: <b>{top_cluster}</b> ({top_cluster_pct:.1f}% dari total curhatan).",
+    bullets = [
+        f"<b>{pct_darurat:.1f}%</b> dari seluruh curhatan terklasifikasi darurat ({int(n_darurat)} dari {total} entri).",
+        f"Akar masalah paling dominan: <b>{top_cluster}</b> ({top_cluster_pct:.1f}% dari total).",
+        f"Sekitar <b>{int(n_perhatian)}</b> curhatan berada di level 'Perlu Perhatian' — kandidat intervensi pencegahan.",
         f"<b>{support_rate:.1f}%</b> dari seluruh teks mengandung respons/kalimat suportif terhadap sesama pengguna.",
     ]
-
-def generate_cluster_insight(df):
-    counts = df["klaster_leksikon"].value_counts(normalize=True) * 100
-    top3 = counts.head(3)
-    bullets = [f"<b>{name}</b> menyumbang <b>{pct:.1f}%</b> dari seluruh curhatan." for name, pct in top3.items()]
-    bullets.append("Tiga klaster akar masalah utama Gen Z menurut brief: tekanan akademik, masalah keluarga, dan finansial — semuanya dipantau pada grafik di atas.")
     return bullets
 
 def generate_lda_insight(df, topic_words, n_topics):
@@ -698,11 +745,12 @@ def generate_kmeans_insight(df, sil, n_clusters):
     sizes = df["kmeans_cluster"].value_counts(normalize=True) * 100
     biggest = sizes.idxmax()
     quality = "cukup baik" if sil >= 0.3 else ("sedang" if sil >= 0.1 else "lemah, klaster saling tumpang tindih")
-    return [
+    bullets = [
         f"Klaster terbesar adalah <b>Klaster {biggest}</b>, mencakup {sizes.max():.1f}% dari seluruh data.",
         f"Silhouette Score sebesar <b>{sil:.3f}</b> menunjukkan pemisahan klaster yang {quality}.",
         f"Data terbagi ke dalam <b>{n_clusters} klaster</b> berdasarkan kemiripan kata pada representasi TF-IDF + SVD.",
     ]
+    return bullets
 
 def generate_sna_insight(G):
     if G.number_of_nodes() == 0:
@@ -711,23 +759,21 @@ def generate_sna_insight(G):
     density = nx.density(G)
     deg_cen = nx.degree_centrality(G)
     top_acc = max(deg_cen, key=deg_cen.get) if deg_cen else "-"
-    top_supporter_df = top_support_accounts(G, top_n=1)
-    top_supporter = top_supporter_df.iloc[0]["Akun"] if not top_supporter_df.empty else "-"
-    return [
+    bullets = [
         f"Jaringan terdiri dari <b>{G.number_of_nodes()} akun</b> dan <b>{G.number_of_edges()} interaksi</b>, dengan kepadatan jaringan {density:.4f}.",
         f"<b>{n_sup_edges}</b> dari seluruh interaksi adalah respons suportif terhadap curhatan orang lain.",
-        f"Akun paling aktif memberi dukungan/semangat: <b>@{top_supporter}</b> — kandidat utama 'support hero' dalam ekosistem ini.",
-        f"Akun paling sentral dalam jaringan (degree centrality tertinggi): <b>@{top_acc}</b>.",
+        f"Akun paling sentral dalam jaringan: <b>@{top_acc}</b>, kemungkinan menjadi simpul utama support system.",
     ]
+    return bullets
 
 # ============================================================
 # UI — HERO
 # ============================================================
 st.markdown("""
 <div class="mw-hero">
-  <span class="mw-eyebrow">Social Listening · Kesehatan Mental Gen Z</span>
+  <span class="mw-eyebrow">Social Listening · Kesehatan Mental</span>
   <h1>🌷 MindWatch — Monitoring Isu Kesehatan Mental Gen Z</h1>
-  <p>Klasifikasi Urgensi · Klasterisasi & Trending Topic · Social Network Analysis (Support System)</p>
+  <p>Pipeline preprocessing · Statistik deskriptif · Deteksi urgensi · LDA · K-Means · ML Classifier · Social Network Analysis</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -745,10 +791,7 @@ with st.sidebar:
     if not SASTRAWI_AVAILABLE:
         st.warning("Paket **Sastrawi** tidak terpasang — tahap stemming akan dilewati (kata dibiarkan apa adanya). Jalankan `pip install Sastrawi` untuk mengaktifkan stemming penuh.")
     st.markdown("### ℹ️ Tentang")
-    st.caption("**Tema 7** — Monitoring Isu Kesehatan Mental Gen Z\n\n"
-               "• Klasifikasi: Butuh Pertolongan Segera vs Curhat Ringan\n"
-               "• Klasterisasi & Trending Topic: akar masalah (akademik, keluarga, finansial)\n"
-               "• SNA: jaringan akun pendukung (support system)")
+    st.caption("**Tema 7** — Monitoring Isu Kesehatan Mental Gen Z\nKomponen: Preprocessing · Statistik · Urgensi · LDA · K-Means · ML Classifier · SNA")
     st.divider()
     st.markdown("### 🆘 Krisis? Hubungi:")
     st.caption(CRISIS_RESOURCES)
@@ -780,10 +823,6 @@ if uploaded_file:
                                    index=(list(df.columns).index(default_ts) + 1) if default_ts else 0)
             ts_col = None if ts_col == "(tidak ada)" else ts_col
 
-    if df[text_col].astype(str).str.strip().eq("").all():
-        st.error("Kolom teks yang dipilih kosong untuk seluruh baris. Pilih kolom teks yang benar pada Konfigurasi Kolom Dataset di atas.")
-        st.stop()
-
     with st.spinner("🌸 Memproses data..."):
         df["text_clean"] = df[text_col].astype(str).str.lower()
 
@@ -791,15 +830,14 @@ if uploaded_file:
         df["text_preprocessed"] = pipe_df["stemmed"].values
 
         urgency_results = df["text_clean"].apply(score_urgency)
-        df["urgensi"]         = urgency_results.apply(lambda x: x[0])
-        df["skor_urgensi"]    = urgency_results.apply(lambda x: x[1])
-        df["n_severe"]        = urgency_results.apply(lambda x: x[2])
-        df["n_moderate"]      = urgency_results.apply(lambda x: x[3])
-        df["n_mild"]          = urgency_results.apply(lambda x: x[4])
-        df["tingkat_risiko"]  = urgency_results.apply(lambda x: x[5])
+        df["urgensi"]       = urgency_results.apply(lambda x: x[0])
+        df["skor_urgensi"]  = urgency_results.apply(lambda x: x[1])
+        df["n_severe"]      = urgency_results.apply(lambda x: x[2])
+        df["n_moderate"]    = urgency_results.apply(lambda x: x[3])
+        df["n_mild"]        = urgency_results.apply(lambda x: x[4])
         df["klaster_leksikon"] = df["text_clean"].apply(detect_cluster)
-        df["is_support"]      = df["text_clean"].apply(detect_support)
-        df["jumlah_kata"]     = df[text_col].astype(str).apply(lambda t: len(t.split()))
+        df["is_support"]    = df["text_clean"].apply(detect_support)
+        df["jumlah_kata"]   = df[text_col].astype(str).apply(lambda t: len(t.split()))
         df["jumlah_karakter"] = df[text_col].astype(str).apply(len)
 
         if ts_col:
@@ -807,34 +845,44 @@ if uploaded_file:
 
         engagement_cols = detect_engagement_cols(df)
 
-        clean_texts = df["text_preprocessed"].tolist()
-        if all(t.strip() == "" for t in clean_texts):
-            st.error("Setelah preprocessing, semua teks menjadi kosong (kemungkinan kolom teks salah atau berisi data non-teks). LDA, K-Means, dan ML Classifier tidak dapat dijalankan.")
-            st.stop()
-        # Hindari error CountVectorizer/TfidfVectorizer bila ada baris kosong setelah preprocessing
-        clean_texts_safe = [t if t.strip() else "kosong" for t in clean_texts]
+        # Beberapa baris bisa menjadi string kosong setelah preprocessing
+        # (mis. teks hanya berisi @mention/angka/stopword). CountVectorizer &
+        # TfidfVectorizer akan error "empty vocabulary" jika dibiarkan, jadi
+        # untuk training LDA/K-Means baris kosong diisi placeholder netral.
+        # df["text_preprocessed"] tetap menyimpan versi asli (boleh kosong)
+        # supaya statistik kata & wordcloud tidak tercemar placeholder.
+        clean_texts = df["text_preprocessed"].apply(
+            lambda t: t if isinstance(t, str) and t.strip() else "teks"
+        ).tolist()
 
-        dom_topics, topic_words, log_lik, perplexity, lda_model, bow_vec = run_lda(clean_texts_safe, n_topics)
+        n_docs = len(clean_texts)
+        n_topics_eff = max(1, min(n_topics, n_docs))
+        if n_topics_eff < n_topics:
+            st.info(f"ℹ️ Jumlah topik LDA disesuaikan otomatis menjadi **{n_topics_eff}** karena data hanya berisi {n_docs} baris.")
+        dom_topics, topic_words, log_lik, perplexity, lda_model, bow_vec = run_lda(clean_texts, n_topics_eff)
         df["lda_topic"] = dom_topics
-        topic_label_map = {i: f"Topik {i}: {', '.join(topic_words[i][:3])}" for i in range(n_topics)}
+        topic_label_map = {i: f"Topik {i}: {', '.join(topic_words[i][:3])}" for i in range(n_topics_eff)}
         df["lda_topic_label"] = df["lda_topic"].map(topic_label_map)
+        n_topics = n_topics_eff
 
-        km_labels, X_2d, km_final, k_range, wcss, sil, dbi, chi = run_kmeans(clean_texts_safe, n_clusters)
+        n_clusters_eff = max(2, min(n_clusters, n_docs - 1)) if n_docs > 2 else 1
+        if n_clusters_eff < n_clusters:
+            st.info(f"ℹ️ Jumlah klaster K-Means disesuaikan otomatis menjadi **{n_clusters_eff}** karena data hanya berisi {n_docs} baris.")
+        km_labels, X_2d, km_final, k_range, wcss, sil, dbi, chi = run_kmeans(clean_texts, n_clusters_eff)
         df["kmeans_cluster"] = km_labels
+        n_clusters = n_clusters_eff
 
         G = build_network(df, text_col, username_col, parent_col)
 
     total = len(df)
-    n_urgent  = (df["urgensi"] == LABEL_URGENT).sum()
-    n_ringan  = (df["urgensi"] == LABEL_RINGAN).sum()
-    n_tinggi  = (df["tingkat_risiko"] == "Tinggi").sum()
-    n_sedang  = (df["tingkat_risiko"] == "Sedang").sum()
-    n_rendah  = (df["tingkat_risiko"] == "Rendah").sum()
-    pct_urgent = n_urgent / total * 100 if total else 0
+    n_darurat   = (df["urgensi"] == "🚨 Darurat").sum()
+    n_perhatian = (df["urgensi"] == "⚠️ Perlu Perhatian").sum()
+    n_ringan    = (df["urgensi"] == "💬 Curhat Ringan").sum()
+    pct_darurat = n_darurat / total * 100 if total else 0
 
-    if pct_urgent >= 15:
+    if pct_darurat >= 15:
         light_class, status_text = "on-red", "⚠️ SIAGA TINGGI"
-    elif pct_urgent >= 5:
+    elif pct_darurat >= 5:
         light_class, status_text = "on-yellow", "👁️ PERLU DIPANTAU"
     else:
         light_class, status_text = "on-green", "✅ TERKENDALI"
@@ -854,16 +902,16 @@ if uploaded_file:
 
     with col_kpi:
         k1, k2, k3, k4 = st.columns(4)
-        k1.metric("Total Curhatan", f"{total:,}")
-        k2.metric(LABEL_URGENT, int(n_urgent), f"{pct_urgent:.1f}%")
-        k3.metric("Risiko Tinggi", int(n_tinggi))
-        k4.metric(LABEL_RINGAN, int(n_ringan))
+        k1.metric("Total Tweet", f"{total:,}")
+        k2.metric("🚨 Darurat", int(n_darurat), f"{pct_darurat:.1f}%")
+        k3.metric("⚠️ Perlu Perhatian", int(n_perhatian))
+        k4.metric("💬 Curhat Ringan", int(n_ringan))
 
-    if n_urgent > 0:
+    if n_darurat > 0:
         st.markdown(f"""
         <div class="mw-alert-banner">
-        <b>⚠️ Peringatan:</b> Terdeteksi <b>{int(n_urgent)} curhatan berisiko tinggi/sedang</b> yang memerlukan perhatian
-        ({int(n_tinggi)} risiko tinggi, {int(n_sedang)} risiko sedang).<br><small>{CRISIS_RESOURCES}</small>
+        <b>⚠️ Peringatan:</b> Terdeteksi <b>{int(n_darurat)} curhatan berisiko tinggi</b>.
+        Segmen ini memerlukan perhatian segera.<br><small>{CRISIS_RESOURCES}</small>
         </div>
         """, unsafe_allow_html=True)
 
@@ -875,11 +923,11 @@ if uploaded_file:
     tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
         "🧪 Preprocessing Pipeline",
         "📐 Statistik Deskriptif",
-        "🚨 Klasifikasi Urgensi",
-        "🧩 Klasterisasi & Trending Topic",
-        "🔬 LDA & K-Means (Lanjutan)",
+        "📈 Sentimen & Urgensi",
+        "🔬 LDA Topic Modeling",
+        "🧩 K-Means Clustering",
         "🤖 ML Classifier",
-        "🕸️ SNA — Support System",
+        "🕸️ Social Network (SNA)",
         "📋 Data & Export",
     ])
 
@@ -931,14 +979,10 @@ if uploaded_file:
             fig_funnel.update_layout(**PLOTLY_LAYOUT, barmode="group", xaxis_title="", yaxis_title="Jumlah Kata")
             st.plotly_chart(fig_funnel, use_container_width=True)
 
-        norm_unique = int(stats_df.loc[stats_df["Tahap"] == "Normalisasi", "Kata Unik"].values[0])
-        sw_unique = int(stats_df.loc[stats_df["Tahap"] == "Stopword Removal", "Kata Unik"].values[0])
         insight_card("Insight Preprocessing", [
-            "Tahap <b>cleaning</b> memangkas noise (URL, mention, angka, simbol) sebelum normalisasi dilakukan.",
-            f"Setelah stopword removal, jumlah kata unik berkurang dari <b>{norm_unique}</b> menjadi <b>{sw_unique}</b>.",
-            ("Stemming Sastrawi menyatukan variasi morfologis kata (mis. 'menangis' & 'tangisan') ke akar kata yang sama, "
-             "sehingga representasi fitur TF-IDF/BoW lebih ringkas.") if SASTRAWI_AVAILABLE else
-            "Stemming dilewati karena paket Sastrawi tidak terdeteksi di environment ini.",
+            f"Tahap <b>cleaning</b> memangkas noise (URL, mention, angka, simbol) sebelum normalisasi dilakukan.",
+            f"Setelah stopword removal, jumlah kata unik berkurang dari <b>{stats_df.loc[stats_df['Tahap']=='Normalisasi','Kata Unik'].values[0]}</b> menjadi <b>{stats_df.loc[stats_df['Tahap']=='Stopword Removal','Kata Unik'].values[0]}</b>.",
+            "Stemming Sastrawi menyatukan variasi morfologis kata (mis. 'menangis' & 'tangisan') ke akar kata yang sama, sehingga representasi fitur TF-IDF/BoW lebih ringkas." if SASTRAWI_AVAILABLE else "Stemming dilewati karena paket Sastrawi tidak terdeteksi di environment ini.",
         ])
 
     # -------- TAB 1: STATISTIK DESKRIPTIF --------
@@ -988,15 +1032,11 @@ if uploaded_file:
         c1, c2 = st.columns(2)
         with c1:
             raw_words = " ".join(pipe_df["cleaned"]).split()
-            if raw_words:
-                raw_top = pd.DataFrame(Counter(raw_words).most_common(15), columns=["Kata", "Frekuensi"])
-                fig_raw_top = px.bar(raw_top.sort_values("Frekuensi"), x="Frekuensi", y="Kata", orientation="h",
-                                      color="Frekuensi", color_continuous_scale=PASTEL_SCALE,
-                                      title="Top Words — Raw (sebelum stopword removal)")
-                fig_raw_top.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
-                st.plotly_chart(fig_raw_top, use_container_width=True)
-            else:
-                st.info("Tidak cukup data untuk top words.")
+            raw_top = pd.DataFrame(Counter(raw_words).most_common(15), columns=["Kata", "Frekuensi"])
+            fig_raw_top = px.bar(raw_top.sort_values("Frekuensi"), x="Frekuensi", y="Kata", orientation="h",
+                                  color="Frekuensi", color_continuous_scale=PASTEL_SCALE, title="Top Words — Raw (sebelum stopword removal)")
+            fig_raw_top.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
+            st.plotly_chart(fig_raw_top, use_container_width=True)
         with c2:
             final_words = " ".join(df["text_preprocessed"]).split()
             if final_words:
@@ -1012,12 +1052,8 @@ if uploaded_file:
 
         if engagement_cols:
             st.markdown("#### Statistik Engagement")
-            eng_summary = pd.DataFrame({
-                "Metrik": engagement_cols,
-                "Rata-rata": [df[c].mean() for c in engagement_cols],
-                "Maksimum": [df[c].max() for c in engagement_cols],
-                "Total": [df[c].sum() for c in engagement_cols],
-            }).round(2)
+            eng_summary = df[engagement_cols].describe().T[["mean", "max", "sum"]].reset_index()
+            eng_summary.columns = ["Metrik", "Rata-rata", "Maksimum", "Total"]
             st.dataframe(eng_summary, use_container_width=True, hide_index=True)
             top_col = engagement_cols[0]
             top_eng = df.sort_values(top_col, ascending=False).head(5)[[text_col, top_col, "urgensi"]]
@@ -1026,11 +1062,9 @@ if uploaded_file:
         else:
             st.info("💡 Tidak ada kolom engagement (likes/retweet/replies) terdeteksi di dataset ini.")
 
-    # -------- TAB 2: KLASIFIKASI URGENSI --------
+    # -------- TAB 2: SENTIMEN & URGENSI --------
     with tab2:
-        st.subheader("🚨 Klasifikasi Urgensi Curhatan")
-        st.caption(f"Klasifikasi biner: **{LABEL_URGENT}** vs **{LABEL_RINGAN}**, dengan rincian tingkat risiko (Tinggi/Sedang/Rendah) sebagai detail pendukung keputusan.")
-
+        st.subheader("Distribusi Tingkat Urgensi")
         c1, c2 = st.columns(2)
         with c1:
             urg_count = df["urgensi"].value_counts().reset_index()
@@ -1040,12 +1074,25 @@ if uploaded_file:
             fig_pie.update_layout(**PLOTLY_LAYOUT, legend=dict(orientation="h", y=-0.1))
             st.plotly_chart(fig_pie, use_container_width=True)
         with c2:
-            risk_count = df["tingkat_risiko"].value_counts().reindex(["Tinggi", "Sedang", "Rendah"]).fillna(0).reset_index()
-            risk_count.columns = ["Tingkat Risiko", "Jumlah"]
-            fig_risk = px.bar(risk_count, x="Tingkat Risiko", y="Jumlah", color="Tingkat Risiko",
-                               color_discrete_map=COLOR_MAP_RISK, text="Jumlah")
-            fig_risk.update_layout(**PLOTLY_LAYOUT, showlegend=False, title="Rincian Tingkat Risiko")
-            st.plotly_chart(fig_risk, use_container_width=True)
+            fig_bar = px.bar(urg_count, x="Urgensi", y="Jumlah", color="Urgensi",
+                              color_discrete_map=COLOR_MAP_URGENCY, text="Jumlah")
+            fig_bar.update_layout(**PLOTLY_LAYOUT, showlegend=False)
+            st.plotly_chart(fig_bar, use_container_width=True)
+
+        st.subheader("Klaster Akar Masalah (Leksikon)")
+        klaster_count = df["klaster_leksikon"].value_counts().reset_index()
+        klaster_count.columns = ["Klaster", "Jumlah"]
+        c3, c4 = st.columns(2)
+        with c3:
+            fig_kp = px.pie(klaster_count, names="Klaster", values="Jumlah", hole=0.45,
+                             color_discrete_sequence=PASTEL_SEQ)
+            fig_kp.update_layout(**PLOTLY_LAYOUT, legend=dict(orientation="h", y=-0.2))
+            st.plotly_chart(fig_kp, use_container_width=True)
+        with c4:
+            fig_kb = px.bar(klaster_count.sort_values("Jumlah"), x="Jumlah", y="Klaster",
+                             orientation="h", color="Jumlah", color_continuous_scale=PASTEL_SCALE)
+            fig_kb.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
+            st.plotly_chart(fig_kb, use_container_width=True)
 
         if ts_col and df["_ts_parsed"].notna().sum() > 0:
             st.subheader("Tren Urgensi dari Waktu ke Waktu")
@@ -1062,49 +1109,11 @@ if uploaded_file:
             fig_trend.update_layout(**PLOTLY_LAYOUT, xaxis_title="Tanggal", yaxis_title="Jumlah")
             st.plotly_chart(fig_trend, use_container_width=True)
 
-        insight_card("Insight Otomatis — Klasifikasi Urgensi", generate_urgency_insight(df))
+        insight_card("Insight Otomatis — Urgensi", generate_urgency_insight(df))
 
-    # -------- TAB 3: KLASTERISASI & TRENDING TOPIC --------
+    # -------- TAB 3: LDA --------
     with tab3:
-        st.subheader("🧩 Klasterisasi Akar Masalah Penyebab Kecemasan")
-        st.caption("Tiga klaster utama sesuai brief: **Tekanan Akademik**, **Masalah Keluarga**, **Finansial** (ditambah 2 klaster pelengkap untuk konteks).")
-
-        klaster_count = df["klaster_leksikon"].value_counts().reset_index()
-        klaster_count.columns = ["Klaster", "Jumlah"]
-        c1, c2 = st.columns(2)
-        with c1:
-            fig_kp = px.pie(klaster_count, names="Klaster", values="Jumlah", hole=0.45,
-                             color_discrete_sequence=PASTEL_SEQ, title="Klaster Penyebab Stres Terbesar Gen Z")
-            fig_kp.update_layout(**PLOTLY_LAYOUT, legend=dict(orientation="h", y=-0.2))
-            st.plotly_chart(fig_kp, use_container_width=True)
-        with c2:
-            fig_kb = px.bar(klaster_count.sort_values("Jumlah"), x="Jumlah", y="Klaster",
-                             orientation="h", color="Jumlah", color_continuous_scale=PASTEL_SCALE)
-            fig_kb.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
-            st.plotly_chart(fig_kb, use_container_width=True)
-
-        st.subheader("📈 Trending Topic — Tren Klaster dari Waktu ke Waktu")
-        if ts_col and df["_ts_parsed"].notna().sum() > 0:
-            trend_kl = df.dropna(subset=["_ts_parsed"]).copy()
-            trend_kl["periode"] = trend_kl["_ts_parsed"].dt.to_period("D").astype(str)
-            trend_kl_pivot = trend_kl.groupby(["periode", "klaster_leksikon"]).size().unstack(fill_value=0).reset_index()
-            fig_kl_trend = go.Figure()
-            for i, col in enumerate([c for c in trend_kl_pivot.columns if c != "periode"]):
-                fig_kl_trend.add_trace(go.Scatter(
-                    x=trend_kl_pivot["periode"], y=trend_kl_pivot[col],
-                    mode="lines+markers", name=col, line=dict(color=PASTEL_SEQ[i % len(PASTEL_SEQ)], width=2.5),
-                ))
-            fig_kl_trend.update_layout(**PLOTLY_LAYOUT, xaxis_title="Tanggal", yaxis_title="Jumlah Curhatan per Klaster")
-            st.plotly_chart(fig_kl_trend, use_container_width=True)
-        else:
-            st.info("💡 Pilih kolom waktu di konfigurasi kolom untuk melihat tren klaster (trending topic) harian.")
-
-        insight_card("Insight Otomatis — Klasterisasi & Trending Topic", generate_cluster_insight(df))
-
-    # -------- TAB 4: LDA & K-MEANS (LANJUTAN) --------
-    with tab4:
-        st.markdown("### 🔬 Metode Lanjutan: LDA Topic Modeling")
-        st.caption("Pendekatan statistik sebagai pembanding terhadap klasterisasi berbasis leksikon di atas.")
+        st.subheader("🔬 Latent Dirichlet Allocation (LDA) Topic Modeling")
 
         col_a, col_b = st.columns(2)
         with col_a:
@@ -1119,17 +1128,19 @@ if uploaded_file:
             </div>
             """, unsafe_allow_html=True)
         with col_b:
-            st.markdown("""
+            st.markdown(f"""
             <div class="mw-card">
             <h4>Cara Kerja LDA</h4>
             <p style="font-size:13px;">
-            LDA (Latent Dirichlet Allocation) mengasumsikan setiap dokumen merupakan campuran dari beberapa
-            topik tersembunyi, dan setiap topik dicirikan oleh distribusi kata-kata, menggunakan representasi <b>Bag of Words</b>.
+            LDA (Latent Dirichlet Allocation) adalah model probabilistik yang mengasumsikan
+            setiap dokumen merupakan campuran dari beberapa topik tersembunyi,
+            dan setiap topik dicirikan oleh distribusi kata-kata.
+            Menggunakan representasi <b>Bag of Words (BoW)</b> sesuai teori.
             </p>
             </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("#### Kata Kunci Tiap Topik")
+        st.subheader("Kata Kunci Tiap Topik")
         cols_topics = st.columns(n_topics)
         for i, col in enumerate(cols_topics):
             with col:
@@ -1141,6 +1152,7 @@ if uploaded_file:
                 </div>
                 """, unsafe_allow_html=True)
 
+        st.subheader("Distribusi Dokumen per Topik")
         topic_dist = df["lda_topic"].value_counts().reset_index()
         topic_dist.columns = ["Topik", "Jumlah"]
         topic_dist["Label"] = topic_dist["Topik"].map(lambda x: f"Topik {x}: {', '.join(topic_words[x][:2])}")
@@ -1148,10 +1160,32 @@ if uploaded_file:
                           color="Jumlah", color_continuous_scale=PASTEL_SCALE, text="Jumlah")
         fig_lda.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False, xaxis_title="", yaxis_title="Jumlah Dokumen")
         st.plotly_chart(fig_lda, use_container_width=True)
+
+        if ts_col and df["_ts_parsed"].notna().sum() > 0:
+            st.subheader("Tren Topik LDA dari Waktu ke Waktu")
+            trend_lda = df.dropna(subset=["_ts_parsed"]).copy()
+            trend_lda["periode"] = trend_lda["_ts_parsed"].dt.to_period("D").astype(str)
+            trend_lda_pivot = trend_lda.groupby(["periode", "lda_topic"]).size().unstack(fill_value=0)
+            trend_lda_pivot.columns = [f"Topik {c}" for c in trend_lda_pivot.columns]
+            trend_lda_pivot = trend_lda_pivot.reset_index()
+
+            fig_lda_trend = go.Figure()
+            for i, col in enumerate([c for c in trend_lda_pivot.columns if c != "periode"]):
+                fig_lda_trend.add_trace(go.Scatter(
+                    x=trend_lda_pivot["periode"], y=trend_lda_pivot[col],
+                    mode="lines+markers", name=col,
+                    line=dict(color=PASTEL_SEQ[i % len(PASTEL_SEQ)], width=2.5),
+                ))
+            fig_lda_trend.update_layout(**PLOTLY_LAYOUT, xaxis_title="Tanggal", yaxis_title="Volume Isu")
+            st.plotly_chart(fig_lda_trend, use_container_width=True)
+        else:
+            st.info("💡 Pilih kolom waktu di konfigurasi untuk melihat tren topik harian.")
+
         insight_card("Insight Otomatis — LDA", generate_lda_insight(df, topic_words, n_topics))
 
-        st.divider()
-        st.markdown("### 🧩 Metode Lanjutan: K-Means Clustering")
+    # -------- TAB 4: K-MEANS --------
+    with tab4:
+        st.subheader("🧩 K-Means Clustering")
 
         col_a, col_b = st.columns(2)
         with col_a:
@@ -1180,7 +1214,7 @@ if uploaded_file:
 
         c1, c2 = st.columns(2)
         with c1:
-            st.markdown("##### Elbow Method")
+            st.subheader("Elbow Method")
             fig_elbow = go.Figure()
             fig_elbow.add_trace(go.Scatter(x=list(k_range), y=wcss, mode="lines+markers",
                                             line=dict(color=C_ACCENT, width=2.5),
@@ -1189,8 +1223,9 @@ if uploaded_file:
                                  annotation_text=f"K={n_clusters}", annotation_font_color=C_ACCENT_DUST)
             fig_elbow.update_layout(**PLOTLY_LAYOUT, xaxis_title="Jumlah Klaster (K)", yaxis_title="WCSS (Inertia)")
             st.plotly_chart(fig_elbow, use_container_width=True)
+
         with c2:
-            st.markdown("##### Visualisasi Klaster (2D)")
+            st.subheader("Visualisasi Klaster (2D)")
             df_plot = pd.DataFrame({"x": X_2d[:, 0], "y": X_2d[:, 1], "Klaster": df["kmeans_cluster"].astype(str)})
             centroids = km_final.cluster_centers_
             fig_scatter = px.scatter(df_plot, x="x", y="y", color="Klaster",
@@ -1204,7 +1239,7 @@ if uploaded_file:
             fig_scatter.update_layout(**PLOTLY_LAYOUT)
             st.plotly_chart(fig_scatter, use_container_width=True)
 
-        st.markdown("##### Kata Dominan per Klaster (Top-5 Words)")
+        st.subheader("Kata Dominan per Klaster (Top-5 Words)")
         cols_km = st.columns(n_clusters)
         for cluster_id in range(n_clusters):
             with cols_km[cluster_id]:
@@ -1222,8 +1257,23 @@ if uploaded_file:
                 </div>
                 """, unsafe_allow_html=True)
 
-        st.markdown("##### Crosstab: Klaster K-Means vs Label Urgensi")
-        st.caption("Bukan confusion matrix klasifikasi (K-Means unsupervised) — menunjukkan sejauh mana klaster yang terbentuk selaras dengan label urgensi.")
+        st.subheader("WordCloud per Klaster")
+        cluster_pick = st.selectbox("Pilih Klaster:", [f"Klaster {i}" for i in range(n_clusters)])
+        cluster_id_pick = int(cluster_pick.split()[-1])
+        text_blob = " ".join(df[df["kmeans_cluster"] == cluster_id_pick]["text_preprocessed"])
+        if text_blob.strip():
+            wc2 = WordCloud(width=1100, height=380, background_color="white", mode="RGB",
+                             colormap="RdPu", max_words=80).generate(text_blob)
+            fig_wc2, ax_wc2 = plt.subplots(figsize=(12, 4))
+            fig_wc2.patch.set_alpha(0)
+            ax_wc2.imshow(wc2, interpolation="bilinear")
+            ax_wc2.axis("off")
+            st.pyplot(fig_wc2)
+        else:
+            st.info("Tidak cukup data untuk WordCloud.")
+
+        st.subheader("Crosstab: Klaster K-Means vs Label Urgensi")
+        st.caption("Bukan confusion matrix klasifikasi sebenarnya (K-Means unsupervised) — ini menunjukkan sejauh mana klaster yang terbentuk selaras dengan label urgensi leksikon.")
         cross = pd.crosstab(df["kmeans_cluster"], df["urgensi"])
         fig_cross = px.imshow(cross, text_auto=True, color_continuous_scale=PASTEL_SCALE,
                                labels=dict(x="Urgensi", y="Klaster K-Means", color="Jumlah"))
@@ -1235,7 +1285,7 @@ if uploaded_file:
     # -------- TAB 5: ML CLASSIFIER --------
     with tab5:
         st.subheader("🤖 ML Classifier — TF-IDF + Logistic Regression")
-        st.caption(f"Model dilatih untuk memprediksi label **{LABEL_URGENT}** vs **{LABEL_RINGAN}** dari teks, sebagai pembanding terhadap pendekatan rule-based.")
+        st.caption("Model dilatih untuk memprediksi label **urgensi** (hasil leksikon) dari teks, sebagai pembanding terhadap pendekatan rule-based.")
 
         labels_list = df["urgensi"].tolist()
         class_counts = Counter(labels_list)
@@ -1243,7 +1293,7 @@ if uploaded_file:
             st.warning("⚠️ Data terlalu sedikit / tidak seimbang antar kelas urgensi untuk melatih classifier yang andal. Tambahkan lebih banyak data agar evaluasi lebih bermakna.")
         else:
             model, ml_vectorizer, ml_classes, report, cm, acc, f1m, n_test = train_ml_classifier(
-                df["text_preprocessed"].tolist(), labels_list
+                clean_texts, labels_list
             )
 
             c1, c2, c3 = st.columns(3)
@@ -1252,7 +1302,10 @@ if uploaded_file:
             c3.metric("Jumlah Data Uji", n_test)
 
             st.markdown("#### Classification Report")
-            st.dataframe(report_to_dataframe(report, ml_classes), use_container_width=True)
+            report_df = pd.DataFrame(report).T
+            report_df = report_df.loc[[c for c in ml_classes if c in report_df.index] + ["accuracy", "macro avg", "weighted avg"]]
+            report_df = report_df.round(3)
+            st.dataframe(report_df, use_container_width=True)
 
             c1, c2 = st.columns(2)
             with c1:
@@ -1277,8 +1330,7 @@ if uploaded_file:
             insight_card("Insight Otomatis — ML Classifier", [
                 f"Model mencapai akurasi <b>{acc*100:.1f}%</b> dan F1-score makro <b>{f1m:.3f}</b> pada data uji.",
                 f"Kelas dengan F1-score tertinggi: <b>{max(ml_classes, key=lambda c: report[c]['f1-score'])}</b>.",
-                "Karena label berasal dari pendekatan leksikon (bukan anotasi manusia), classifier ini paling berguna sebagai "
-                "pembanding kecepatan/konsistensi terhadap aturan leksikon, bukan sebagai ground truth absolut.",
+                "Karena label berasal dari pendekatan leksikon (bukan anotasi manusia), classifier ini paling berguna sebagai pembanding kecepatan/konsistensi terhadap aturan leksikon, bukan sebagai ground truth absolut.",
             ])
 
             st.divider()
@@ -1287,23 +1339,25 @@ if uploaded_file:
                                      placeholder="Contoh: Aku capek banget sama tugas kuliah yang numpuk terus...")
             if st.button("🔍 Analisis Sekarang", type="primary") and new_text.strip():
                 low = new_text.lower()
-                label, score, sev, mod, mild_, risk_level = score_urgency(low)
+                label, score, sev, mod, mild_ = score_urgency(low)
                 klaster = detect_cluster(low)
                 supportive = detect_support(low)
                 preprocessed = preprocess(new_text)
 
-                X_new_bow = bow_vec.transform([preprocessed if preprocessed.strip() else "kosong"])
+                X_new_bow = bow_vec.transform([preprocessed])
                 doc_top_new = lda_model.transform(X_new_bow)
                 lda_pred = doc_top_new.argmax()
 
-                X_new_tfidf = ml_vectorizer.transform([preprocessed if preprocessed.strip() else "kosong"])
+                X_new_tfidf = ml_vectorizer.transform([preprocessed])
                 ml_pred = model.predict(X_new_tfidf)[0]
                 ml_proba = dict(zip(model.classes_, model.predict_proba(X_new_tfidf)[0]))
 
                 colr1, colr2 = st.columns(2)
                 with colr1:
-                    if label == LABEL_URGENT:
-                        st.error(f"### Leksikon: {label} (Risiko {risk_level})")
+                    if "Darurat" in label:
+                        st.error(f"### Leksikon: {label}")
+                    elif "Perhatian" in label:
+                        st.warning(f"### Leksikon: {label}")
                     else:
                         st.success(f"### Leksikon: {label}")
 
@@ -1329,14 +1383,13 @@ if uploaded_file:
                     st.plotly_chart(fig_proba, use_container_width=True)
                     st.markdown("**Teks Setelah Preprocessing:**")
                     st.code(preprocessed if preprocessed else "(teks kosong setelah preprocessing)")
-                    if label == LABEL_URGENT:
+                    if "Darurat" in label:
                         st.error(f"**🆘 Hubungi layanan darurat:**\n{CRISIS_RESOURCES}")
 
     # -------- TAB 6: SNA --------
     with tab6:
-        st.subheader("🕸️ Social Network Analysis — Ekosistem Akun Penolong")
-        st.caption("Memetakan siapa akun/komunitas yang paling aktif memberikan respons positif/semangat kepada pengirim curhatan. "
-                   "Warna edge **pink** = interaksi biasa · **mint** = respon supportif.")
+        st.subheader("🕸️ Social Network Analysis — Peta Support System")
+        st.caption("Warna edge **pink** = interaksi biasa · **mint** = respon supportif")
 
         if G.number_of_nodes() == 0:
             st.warning("Tidak ada relasi (@mention / reply) terdeteksi. Pastikan kolom reply-to / teks mengandung @mention.")
@@ -1402,8 +1455,8 @@ if uploaded_file:
                                              default=list(df["klaster_leksikon"].unique()))
 
         filtered = df[df["urgensi"].isin(urg_filter) & df["klaster_leksikon"].isin(klaster_filter)]
-        display_cols = [text_col, "urgensi", "tingkat_risiko", "klaster_leksikon", "lda_topic",
-                         "kmeans_cluster", "skor_urgensi", "is_support", "jumlah_kata"]
+        display_cols = [text_col, "urgensi", "klaster_leksikon", "lda_topic", "kmeans_cluster",
+                         "skor_urgensi", "is_support", "jumlah_kata"]
         if username_col:
             display_cols.insert(0, username_col)
         st.dataframe(filtered[[c for c in display_cols if c in filtered.columns]],
@@ -1431,14 +1484,15 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("### ✨ Fitur Dashboard (sesuai brief Tema 7)")
-    f1, f2, f3 = st.columns(3)
+    st.markdown("### ✨ Fitur Dashboard")
+    f1, f2, f3, f4 = st.columns(4)
     features = [
-        ("🚨", "Klasifikasi Urgensi", "Butuh Pertolongan Segera vs Curhat Ringan, dengan lampu indikator real-time dan tingkat risiko."),
-        ("🧩", "Klasterisasi & Trending Topic", "Klaster akar masalah (akademik, keluarga, finansial) + tren kemunculannya dari waktu ke waktu."),
-        ("🕸️", "SNA — Support System", "Visualisasi ekosistem akun penolong: siapa paling aktif memberi respons positif/semangat."),
+        ("🧪", "Preprocessing Pipeline", "Tahapan lengkap dari raw text hingga Sastrawi stemming, dengan contoh nyata & statistik kata."),
+        ("📐", "Statistik Deskriptif", "Panjang teks, distribusi jam/tanggal posting, top words, dan engagement."),
+        ("🚦", "Urgensi & Insight", "Klasifikasi Darurat · Perlu Perhatian · Ringan dengan insight otomatis."),
+        ("🤖", "LDA · K-Means · ML", "Topic modeling, clustering, dan classifier dengan classification report & confusion matrix."),
     ]
-    for col, (icon, title, desc) in zip([f1, f2, f3], features):
+    for col, (icon, title, desc) in zip([f1, f2, f3, f4], features):
         with col:
             st.markdown(f"""
             <div class="mw-card">
@@ -1446,8 +1500,6 @@ else:
             <p style="font-size:13px;">{desc}</p>
             </div>
             """, unsafe_allow_html=True)
-
-    st.markdown("##### Plus pendukung teknis: preprocessing pipeline, statistik deskriptif, LDA, K-Means, dan ML classifier.")
 
     st.markdown(f"""
     <div class="mw-footer">{CRISIS_RESOURCES}</div>
