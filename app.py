@@ -268,22 +268,50 @@ MILD_PHRASES = {
     "khawatir","galau","overthinking","overthink",
 }
 
-# 3 klaster utama sesuai brief dosen + 2 klaster tambahan untuk konteks lebih kaya
+# 3 klaster utama sesuai brief dosen
 CLUSTER_KEYWORDS = {
-    "Tekanan Akademik": {"tugas","skripsi","ujian","dosen","kuliah","tenggat waktu","ipk","krs",
-                          "sidang","praktikum","semester","kampus","magang","nilai","revisi","sks"},
-    "Masalah Keluarga": {"orang tua","ayah","ibu","keluarga","broken home","kdrt",
-                          "cerai","dibanding bandingkan","tekanan keluarga","ekspektasi",
-                          "berantem","dipaksa"},
-    "Finansial": {"uang","biaya kuliah","biaya","ekonomi","kerja","gaji","utang","beasiswa",
-                  "finansial","susah cari kerja","tidak punya uang","nunggak"},
-    "Hubungan Sosial": {"pacar","putus","mantan","teman","lingkar pertemanan","sahabat",
-                         "dikhianati","selingkuh","toksik","dijauhin","kesepian","diabaikan",
-                         "diberi harapan palsu","manipulasi psikologis","bullying","dibully"},
-    "Kesehatan Mental Umum": {"depresi","cemas","anxiety","stress","stres","burnout","trauma",
-                               "insomnia","psikolog","psikiater","konseling","terapi","kesehatan jiwa"},
+    "Tekanan Akademik": {
+        "tugas","skripsi","ujian","dosen",
+        "kuliah","deadline","ipk",
+        "krs","sidang","praktikum",
+        "semester","kampus",
+        "magang","nilai",
+        "revisi","sks"
+    },
+    "Masalah Keluarga": {
+        "orang tua",
+        "ayah",
+        "ibu",
+        "keluarga",
+        "broken home",
+        "kdrt",
+        "cerai",
+        "tekanan keluarga",
+        "ekspektasi",
+        "berantem",
+        "dipaksa"
+    },
+    "Finansial": {
+        "uang",
+        "biaya kuliah",
+        "biaya",
+        "ekonomi",
+        "kerja",
+        "gaji",
+        "utang",
+        "beasiswa",
+        "finansial",
+        "susah cari kerja",
+        "tidak punya uang",
+        "nunggak"
+    }
 }
-CORE_CLUSTERS = ["Tekanan Akademik", "Masalah Keluarga", "Finansial"]
+
+CORE_CLUSTERS = [
+    "Tekanan Akademik",
+    "Masalah Keluarga",
+    "Finansial"
+]
 
 SUPPORT_PHRASES = {
     "semangat","kamu kuat","gpp","gapapa","tidak apa apa","ada aku","dm aja","cerita yuk",
@@ -682,6 +710,33 @@ def generate_cluster_insight(df):
     bullets.append("Tiga klaster akar masalah utama Gen Z menurut brief: tekanan akademik, masalah keluarga, dan finansial — semuanya dipantau pada grafik di atas.")
     return bullets
 
+def generate_trending_topic(df):
+
+    trend = (
+        df["klaster_leksikon"]
+        .value_counts()
+        .reset_index()
+    )
+
+    trend.columns = [
+        "Klaster",
+        "Jumlah"
+    ]
+
+    fig = px.pie(
+        trend,
+        names="Klaster",
+        values="Jumlah",
+        title="Trending Penyebab Stres Gen Z",
+        hole=0.5
+    )
+
+    fig.update_layout(
+        **PLOTLY_LAYOUT
+    )
+
+    return fig
+
 def generate_lda_insight(df, topic_words, n_topics):
     dist = df["lda_topic"].value_counts(normalize=True) * 100
     dom_topic = dist.idxmax()
@@ -694,14 +749,36 @@ def generate_lda_insight(df, topic_words, n_topics):
         bullets.append(f"Topik kedua terbesar: <b>Topik {second}</b> ({', '.join(topic_words[second][:3])}) — {dist[second]:.1f}% dokumen.")
     return bullets
 
-def generate_kmeans_insight(df, sil, n_clusters):
-    sizes = df["kmeans_cluster"].value_counts(normalize=True) * 100
+def generate_kmeans_insight(
+        df,
+        sil,
+        n_clusters
+):
+
+    sizes = (
+        df["kmeans_cluster"]
+        .value_counts(normalize=True)
+        *100
+    )
+
     biggest = sizes.idxmax()
-    quality = "cukup baik" if sil >= 0.3 else ("sedang" if sil >= 0.1 else "lemah, klaster saling tumpang tindih")
+
+    quality = (
+        "cukup baik"
+        if sil>=0.3
+        else "sedang"
+        if sil>=0.1
+        else "lemah"
+    )
+
     return [
-        f"Klaster terbesar adalah <b>Klaster {biggest}</b>, mencakup {sizes.max():.1f}% dari seluruh data.",
-        f"Silhouette Score sebesar <b>{sil:.3f}</b> menunjukkan pemisahan klaster yang {quality}.",
-        f"Data terbagi ke dalam <b>{n_clusters} klaster</b> berdasarkan kemiripan kata pada representasi TF-IDF + SVD.",
+
+        f"Klaster terbesar adalah Klaster {biggest}, mencakup {sizes.max():.1f}% data",
+
+        f"Silhouette Score = {sil:.3f} menunjukkan pemisahan klaster {quality}",
+
+        "Data dikelompokkan menjadi tiga akar masalah utama: Tekanan Akademik, Masalah Keluarga, dan Finansial"
+
     ]
 
 def generate_sna_insight(G):
@@ -739,8 +816,19 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload file CSV", type=["csv"])
     st.divider()
     st.markdown("### ⚙️ Parameter Analisis")
-    n_topics = st.slider("Jumlah Topik LDA (K):", 2, 6, 3)
-    n_clusters = st.slider("Jumlah Klaster K-Means:", 2, 6, 3)
+
+    n_topics = 3
+    n_clusters = 3
+
+    st.info("""
+    Jumlah topik & klaster dikunci menjadi 3
+    sesuai brief dosen:
+
+    • Tekanan Akademik
+    • Masalah Keluarga
+    • Finansial
+    """)
+
     st.divider()
     if not SASTRAWI_AVAILABLE:
         st.warning("Paket **Sastrawi** tidak terpasang — tahap stemming akan dilewati (kata dibiarkan apa adanya). Jalankan `pip install Sastrawi` untuk mengaktifkan stemming penuh.")
@@ -750,7 +838,7 @@ with st.sidebar:
                "• Klasterisasi & Trending Topic: akar masalah (akademik, keluarga, finansial)\n"
                "• SNA: jaringan akun pendukung (support system)")
     st.divider()
-    st.markdown("### 🆘 Krisis? Hubungi:")
+    st.markdown("### 🆘 Krisis?")
     st.caption(CRISIS_RESOURCES)
 
 # ============================================================
@@ -866,6 +954,17 @@ if uploaded_file:
         ({int(n_tinggi)} risiko tinggi, {int(n_sedang)} risiko sedang).<br><small>{CRISIS_RESOURCES}</small>
         </div>
         """, unsafe_allow_html=True)
+
+    st.markdown(
+    "### 📈 Trending Topic Penyebab Stres"
+    )
+
+    fig_trending = generate_trending_topic(df)
+
+    st.plotly_chart(
+        fig_trending,
+        use_container_width=True
+    )
 
     st.divider()
 
