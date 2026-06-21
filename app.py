@@ -321,10 +321,6 @@ SUPPORT_PHRASES = {
     "kamu pasti bisa","jangan lupa makan","jangan lupa istirahat","sehat selalu",
 }
 
-CRISIS_RESOURCES = """
-📞 **SEJIWA (Kemenkes):** 119 ext 8  |  📞 **Into The Light:** intothelightid.org  |  📞 **Yayasan Pulih:** (021) 78842580
-"""
-
 PIPELINE_STEPS = [
     ("01", "Raw Text", "Teks asli dari dataset"),
     ("02", "Case Folding", "Menyamakan ke huruf kecil"),
@@ -821,9 +817,8 @@ with st.sidebar:
     n_clusters = st.slider("Jumlah Klaster K-Means:", 2, 6, 3)
 
     st.caption("""
-    💡 Klaster akar masalah (leksikon) tetap mengikuti 3 kategori sesuai brief dosen
-    — Tekanan Akademik, Masalah Keluarga, Finansial — terlepas dari nilai slider di atas.
-    Slider ini khusus mengatur jumlah topik LDA & klaster K-Means (metode lanjutan).
+    💡 Klaster akar masalah (leksikon)
+    — Tekanan Akademik, Masalah Keluarga, Finansial —
     """)
 
     st.divider()
