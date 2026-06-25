@@ -59,6 +59,16 @@ LABEL_RINGAN = "💬 Curhat Ringan"
 COLOR_MAP_URGENCY = {LABEL_URGENT: C_SOFTRED, LABEL_RINGAN: C_MINT}
 COLOR_MAP_RISK = {"Tinggi": C_SOFTRED, "Sedang": C_PEACH, "Rendah": C_MINT}
 
+# Mapping nama klaster agar sesuai brief instruksi
+KMEANS_CLUSTER_NAMES = {
+    0: "Klaster Tekanan Akademik",
+    1: "Klaster Masalah Keluarga",
+    2: "Klaster Finansial",
+    3: "Klaster Hubungan Sosial",
+    4: "Klaster Kesehatan Mental Umum",
+    5: "Klaster Lainnya"
+}
+
 # ============================================================
 # CUSTOM CSS
 # ============================================================
@@ -293,10 +303,6 @@ SUPPORT_PHRASES = {
     "kamu pasti bisa","jangan lupa makan","jangan lupa istirahat","sehat selalu",
 }
 
-CRISIS_RESOURCES = """
-📞 **SEJIWA (Kemenkes):** 119 ext 8  |  📞 **Into The Light:** intothelightid.org  |  📞 **Yayasan Pulih:** (021) 78842580
-"""
-
 PIPELINE_STEPS = [
     ("01", "Raw Text", "Teks asli dari dataset"),
     ("02", "Case Folding", "Menyamakan ke huruf kecil"),
@@ -526,8 +532,6 @@ def train_ml_classifier(texts, labels):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    # labels=classes WAJIB di-pass agar semua kelas selalu muncul di report,
-    # walau salah satu kelas kebetulan tidak terambil di test split (mencegah KeyError).
     report = classification_report(y_test, y_pred, labels=classes, output_dict=True, zero_division=0)
     cm = confusion_matrix(y_test, y_pred, labels=classes)
     acc = accuracy_score(y_test, y_pred)
@@ -536,8 +540,6 @@ def train_ml_classifier(texts, labels):
     return model, vectorizer, classes, report, cm, acc, f1m, len(y_test)
 
 def report_to_dataframe(report, classes):
-    """Ambil hanya baris kelas + macro/weighted avg (skip key 'accuracy' yang scalar,
-    supaya tidak memicu error saat dikonversi ke DataFrame)."""
     rows = {k: v for k, v in report.items() if k in classes or k in ("macro avg", "weighted avg")}
     return pd.DataFrame(rows).T.round(3)
 
@@ -697,9 +699,10 @@ def generate_lda_insight(df, topic_words, n_topics):
 def generate_kmeans_insight(df, sil, n_clusters):
     sizes = df["kmeans_cluster"].value_counts(normalize=True) * 100
     biggest = sizes.idxmax()
+    biggest_name = KMEANS_CLUSTER_NAMES.get(biggest, f"Klaster {biggest}")
     quality = "cukup baik" if sil >= 0.3 else ("sedang" if sil >= 0.1 else "lemah, klaster saling tumpang tindih")
     return [
-        f"Klaster terbesar adalah <b>Klaster {biggest}</b>, mencakup {sizes.max():.1f}% dari seluruh data.",
+        f"Klaster terbesar adalah <b>{biggest_name}</b>, mencakup {sizes.max():.1f}% dari seluruh data.",
         f"Silhouette Score sebesar <b>{sil:.3f}</b> menunjukkan pemisahan klaster yang {quality}.",
         f"Data terbagi ke dalam <b>{n_clusters} klaster</b> berdasarkan kemiripan kata pada representasi TF-IDF + SVD.",
     ]
@@ -749,9 +752,6 @@ with st.sidebar:
                "• Klasifikasi: Butuh Pertolongan Segera vs Curhat Ringan\n"
                "• Klasterisasi & Trending Topic: akar masalah (akademik, keluarga, finansial)\n"
                "• SNA: jaringan akun pendukung (support system)")
-    st.divider()
-    st.markdown("### 🆘 Krisis? Hubungi:")
-    st.caption(CRISIS_RESOURCES)
 
 # ============================================================
 # MAIN CONTENT
@@ -811,7 +811,6 @@ if uploaded_file:
         if all(t.strip() == "" for t in clean_texts):
             st.error("Setelah preprocessing, semua teks menjadi kosong (kemungkinan kolom teks salah atau berisi data non-teks). LDA, K-Means, dan ML Classifier tidak dapat dijalankan.")
             st.stop()
-        # Hindari error CountVectorizer/TfidfVectorizer bila ada baris kosong setelah preprocessing
         clean_texts_safe = [t if t.strip() else "kosong" for t in clean_texts]
 
         dom_topics, topic_words, log_lik, perplexity, lda_model, bow_vec = run_lda(clean_texts_safe, n_topics)
@@ -863,7 +862,7 @@ if uploaded_file:
         st.markdown(f"""
         <div class="mw-alert-banner">
         <b>⚠️ Peringatan:</b> Terdeteksi <b>{int(n_urgent)} curhatan berisiko tinggi/sedang</b> yang memerlukan perhatian
-        ({int(n_tinggi)} risiko tinggi, {int(n_sedang)} risiko sedang).<br><small>{CRISIS_RESOURCES}</small>
+        ({int(n_tinggi)} risiko tinggi, {int(n_sedang)} risiko sedang).
         </div>
         """, unsafe_allow_html=True)
 
@@ -1011,7 +1010,7 @@ if uploaded_file:
                 st.info("Tidak cukup data untuk WordCloud.")
 
         if engagement_cols:
-            st.markdown("#### Statistik Engagement")
+            st.markdown("#### Menurut Data Engagement")
             eng_summary = pd.DataFrame({
                 "Metrik": engagement_cols,
                 "Rata-rata": [df[c].mean() for c in engagement_cols],
@@ -1191,7 +1190,7 @@ if uploaded_file:
             st.plotly_chart(fig_elbow, use_container_width=True)
         with c2:
             st.markdown("##### Visualisasi Klaster (2D)")
-            df_plot = pd.DataFrame({"x": X_2d[:, 0], "y": X_2d[:, 1], "Klaster": df["kmeans_cluster"].astype(str)})
+            df_plot = pd.DataFrame({"x": X_2d[:, 0], "y": X_2d[:, 1], "Klaster": df["kmeans_cluster"].map(lambda idx: KMEANS_CLUSTER_NAMES.get(idx, f"Klaster {idx}"))})
             centroids = km_final.cluster_centers_
             fig_scatter = px.scatter(df_plot, x="x", y="y", color="Klaster",
                                       color_discrete_sequence=PASTEL_SEQ,
@@ -1204,7 +1203,7 @@ if uploaded_file:
             fig_scatter.update_layout(**PLOTLY_LAYOUT)
             st.plotly_chart(fig_scatter, use_container_width=True)
 
-        st.markdown("##### Kata Dominan per Klaster (Top-5 Words)")
+        st.markdown("##### Kata Dominan per Klaster (Top-5 Words) & WordCloud per Klaster")
         cols_km = st.columns(n_clusters)
         for cluster_id in range(n_clusters):
             with cols_km[cluster_id]:
@@ -1214,17 +1213,39 @@ if uploaded_file:
                 top_words = [w for w, _ in word_counts.most_common(5)]
                 n_docs = len(cluster_texts)
                 words_str = " · ".join(top_words) if top_words else "—"
+
+                cluster_display_name = KMEANS_CLUSTER_NAMES.get(cluster_id, f"Klaster {cluster_id}")
+
                 st.markdown(f"""
                 <div class="mw-card">
-                <h4>Klaster {cluster_id}</h4>
+                <h4>{cluster_display_name}</h4>
                 <p style="font-size:12px;">📄 {n_docs} dokumen</p>
-                <p style="color:{C_ACCENT_DUST}; font-size:13px; line-height:1.8;">{words_str}</p>
+                <p style="color:{C_ACCENT_DUST}; font-size:13px; font-weight: bold; line-height:1.4; margin-bottom: 8px;">{words_str}</p>
                 </div>
                 """, unsafe_allow_html=True)
 
+                # Render WordCloud Per Klaster
+                if all_words:
+                    cluster_wc = WordCloud(
+                        width=400, height=250,
+                        background_color="white",
+                        colormap="RdPu",
+                        max_words=30
+                    ).generate(" ".join(all_words))
+
+                    fig_c_wc, ax_c_wc = plt.subplots(figsize=(4, 2.5))
+                    fig_c_wc.patch.set_alpha(0)
+                    ax_c_wc.imshow(cluster_wc, interpolation="bilinear")
+                    ax_c_wc.axis("off")
+                    st.pyplot(fig_c_wc)
+                else:
+                    st.caption("Kata tidak cukup untuk membuat WordCloud")
+
         st.markdown("##### Crosstab: Klaster K-Means vs Label Urgensi")
         st.caption("Bukan confusion matrix klasifikasi (K-Means unsupervised) — menunjukkan sejauh mana klaster yang terbentuk selaras dengan label urgensi.")
-        cross = pd.crosstab(df["kmeans_cluster"], df["urgensi"])
+
+        df["_kmeans_cluster_named"] = df["kmeans_cluster"].map(lambda idx: KMEANS_CLUSTER_NAMES.get(idx, f"Klaster {idx}"))
+        cross = pd.crosstab(df["_kmeans_cluster_named"], df["urgensi"])
         fig_cross = px.imshow(cross, text_auto=True, color_continuous_scale=PASTEL_SCALE,
                                labels=dict(x="Urgensi", y="Klaster K-Means", color="Jumlah"))
         fig_cross.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
@@ -1329,8 +1350,6 @@ if uploaded_file:
                     st.plotly_chart(fig_proba, use_container_width=True)
                     st.markdown("**Teks Setelah Preprocessing:**")
                     st.code(preprocessed if preprocessed else "(teks kosong setelah preprocessing)")
-                    if label == LABEL_URGENT:
-                        st.error(f"**🆘 Hubungi layanan darurat:**\n{CRISIS_RESOURCES}")
 
     # -------- TAB 6: SNA --------
     with tab6:
@@ -1415,8 +1434,7 @@ if uploaded_file:
 
     st.markdown(f"""
     <div class="mw-footer">
-    🌷 <b>MindWatch Dashboard</b> — Riset & Kesadaran Sosial Isu Kesehatan Mental Gen Z<br>
-    {CRISIS_RESOURCES}
+    🌷 <b>MindWatch Dashboard</b> — Riset & Kesadaran Sosial Isu Kesehatan Mental Gen Z
     </div>
     """, unsafe_allow_html=True)
 
@@ -1449,6 +1467,6 @@ else:
 
     st.markdown("##### Plus pendukung teknis: preprocessing pipeline, statistik deskriptif, LDA, K-Means, dan ML classifier.")
 
-    st.markdown(f"""
-    <div class="mw-footer">{CRISIS_RESOURCES}</div>
+    st.markdown("""
+    <div class="mw-footer">🌷 <b>MindWatch Dashboard</b></div>
     """, unsafe_allow_html=True)
