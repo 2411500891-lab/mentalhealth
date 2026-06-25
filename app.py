@@ -1250,7 +1250,7 @@ if uploaded_file:
         # ✅ Tampilkan info split data
         st.markdown(f"""
         <div class="mw-filter-info">
-        📊 <b>Pembagian Data (sesuai instruksi dosen):</b><br>
+        📊 <b>Pembagian Data:</b><br>
         • Data yang digunakan: <b>{len(df)} baris</b> (sudah tanpa @mention)<br>
         • Split: <b>80% data latih</b> / <b>20% data uji</b> dengan <b>stratified sampling</b><br>
         • Stratified = proporsi label URGENT vs RINGAN dijaga sama di train & test
