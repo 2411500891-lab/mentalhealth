@@ -65,143 +65,559 @@ st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
+/* ===== BASE ===== */
 html, body, [class*="css"] {{ font-family: 'Nunito', sans-serif; color: {C_TEXT}; }}
 h1, h2, h3, h4, h5 {{ font-family: 'Fredoka', sans-serif; color: {C_TEXT}; }}
 .mw-mono {{ font-family: 'JetBrains Mono', monospace; }}
 
-.stApp {{ background: {C_BG}; color: {C_TEXT}; }}
+/* ===== ANIMATED BACKGROUND ===== */
+.stApp {{
+    background: {C_BG};
+    color: {C_TEXT};
+    background-image:
+        radial-gradient(circle at 15% 20%, rgba(247,168,196,0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(184,227,216,0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(255,217,160,0.06) 0%, transparent 60%);
+}}
 
+/* ===== FLOATING BLOBS ===== */
+.mw-blob-wrap {{
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+}}
+.mw-blob {{
+    position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.18;
+    animation: blobFloat 18s ease-in-out infinite alternate;
+}}
+.mw-blob-1 {{
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, {C_ACCENT}, {C_ACCENT_LT});
+    top: -80px; left: -100px; animation-delay: 0s;
+}}
+.mw-blob-2 {{
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, {C_MINT}, rgba(184,227,216,0.3));
+    bottom: -60px; right: -80px; animation-delay: -6s;
+}}
+.mw-blob-3 {{
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, {C_PEACH}, rgba(255,217,160,0.3));
+    top: 40%; left: 60%; animation-delay: -12s;
+}}
+@keyframes blobFloat {{
+    0%   {{ transform: translate(0,0) scale(1); }}
+    33%  {{ transform: translate(30px,-20px) scale(1.05); }}
+    66%  {{ transform: translate(-20px,30px) scale(0.97); }}
+    100% {{ transform: translate(15px,10px) scale(1.03); }}
+}}
+
+/* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {{
-    background: linear-gradient(180deg, #FFF3F7 0%, #FFE8EF 100%);
-    border-right: 1px solid {C_ACCENT_LT};
+    background: linear-gradient(180deg, #FFF0F5 0%, #FFDDE8 60%, #FFE8F3 100%);
+    border-right: 2px solid {C_ACCENT_LT};
+    box-shadow: 4px 0 24px rgba(247,168,196,0.18);
 }}
 section[data-testid="stSidebar"] * {{ color: {C_TEXT} !important; }}
+section[data-testid="stSidebar"] .stSlider > div > div > div {{
+    background: linear-gradient(90deg, {C_ACCENT}, {C_ACCENT_DUST}) !important;
+}}
 
+/* ===== HERO ===== */
 .mw-hero {{
-    padding: 30px 34px; border-radius: 26px;
-    background: linear-gradient(120deg, {C_ACCENT_LT} 0%, #FFF3F7 55%, {C_ACCENT} 100%);
-    border: 1px solid {C_ACCENT_LT};
-    box-shadow: 0 12px 32px rgba(247,168,196,0.35);
-    margin-bottom: 18px;
+    padding: 38px 40px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, {C_ACCENT_LT} 0%, #FFF3F7 40%, rgba(184,227,216,0.25) 75%, {C_ACCENT} 100%);
+    border: 1.5px solid rgba(247,168,196,0.5);
+    box-shadow: 0 20px 60px rgba(247,168,196,0.35), 0 4px 16px rgba(247,168,196,0.15);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
 }}
-.mw-hero h1 {{ font-size: 30px; font-weight: 700; margin: 0 0 6px 0; color: {C_TEXT}; }}
-.mw-hero p {{ color: {C_ACCENT_DUST}; font-size: 14.5px; margin: 0; font-weight: 600; }}
+.mw-hero::before {{
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(247,168,196,0.3), transparent 70%);
+    border-radius: 50%;
+    animation: heroPulse 4s ease-in-out infinite;
+}}
+.mw-hero::after {{
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(184,227,216,0.3), transparent 70%);
+    border-radius: 50%;
+    animation: heroPulse 5s ease-in-out infinite reverse;
+}}
+@keyframes heroPulse {{
+    0%,100% {{ transform: scale(1); opacity: 0.5; }}
+    50% {{ transform: scale(1.15); opacity: 0.8; }}
+}}
+.mw-hero h1 {{
+    font-size: 32px; font-weight: 700; margin: 0 0 8px 0; color: {C_TEXT};
+    position: relative; z-index: 1;
+    text-shadow: 0 2px 12px rgba(232,147,181,0.2);
+}}
+.mw-hero p {{
+    color: {C_ACCENT_DUST}; font-size: 15px; margin: 0; font-weight: 600;
+    position: relative; z-index: 1;
+}}
 .mw-hero .mw-eyebrow {{
-    display:inline-block; font-family:'JetBrains Mono', monospace; font-size: 11px;
-    letter-spacing: 1.5px; text-transform: uppercase; color: {C_ACCENT_DUST};
-    background: rgba(255,255,255,0.55); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px;
+    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase; color: {C_ACCENT_DUST};
+    background: rgba(255,255,255,0.7); padding: 4px 14px; border-radius: 999px;
+    margin-bottom: 12px; border: 1px solid rgba(247,168,196,0.4);
+    backdrop-filter: blur(8px);
+    position: relative; z-index: 1;
+    box-shadow: 0 2px 8px rgba(247,168,196,0.2);
 }}
 
+/* ===== HERO DECO DOTS ===== */
+.mw-hero-dots {{
+    position: absolute; top: 20px; right: 140px; z-index: 1;
+    display: flex; gap: 8px; align-items: center;
+}}
+.mw-hero-dot {{
+    width: 8px; height: 8px; border-radius: 50%;
+    animation: dotBounce 2s ease-in-out infinite;
+}}
+.mw-hero-dot:nth-child(1) {{ background: {C_SOFTRED}; animation-delay: 0s; }}
+.mw-hero-dot:nth-child(2) {{ background: {C_PEACH}; animation-delay: 0.3s; }}
+.mw-hero-dot:nth-child(3) {{ background: {C_MINT}; animation-delay: 0.6s; }}
+.mw-hero-dot:nth-child(4) {{ background: {C_ACCENT}; animation-delay: 0.9s; }}
+@keyframes dotBounce {{
+    0%,100% {{ transform: translateY(0); }}
+    50% {{ transform: translateY(-8px); }}
+}}
+
+/* ===== CARD ===== */
 .mw-card {{
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 20px;
-    padding: 18px 20px; height: 100%; margin-bottom: 12px;
+    background: linear-gradient(135deg, #fff 0%, {C_CARD} 100%);
+    border: 1.5px solid rgba(247,168,196,0.35);
+    border-radius: 22px;
+    padding: 20px 22px;
+    height: 100%;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 4px 20px rgba(247,168,196,0.12);
+}}
+.mw-card:hover {{
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px rgba(247,168,196,0.28);
+}}
+.mw-card::before {{
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, {C_ACCENT}, {C_MINT}, {C_PEACH});
+    border-radius: 22px 22px 0 0;
 }}
 .mw-card h4 {{
-    margin-top: 0; font-size: 13px; color: {C_ACCENT_DUST};
-    font-weight: 700; letter-spacing: .4px; text-transform: uppercase; font-family:'Quicksand',sans-serif;
+    margin-top: 0; font-size: 12px; color: {C_ACCENT_DUST};
+    font-weight: 700; letter-spacing: .8px; text-transform: uppercase; font-family: 'Quicksand', sans-serif;
 }}
-.mw-card .big {{ font-size: 30px; font-weight: 700; color: {C_ACCENT_DUST}; font-family:'Fredoka',sans-serif; }}
+.mw-card .big {{ font-size: 32px; font-weight: 700; color: {C_ACCENT_DUST}; font-family: 'Fredoka', sans-serif; }}
 .mw-card p {{ color: {C_TEXT}; }}
 
+/* ===== INSIGHT CARD ===== */
 .mw-insight {{
-    background: linear-gradient(120deg, rgba(184,227,216,0.35), rgba(247,168,196,0.18));
-    border: 1px dashed {C_ACCENT_DUST}; border-radius: 18px; padding: 16px 20px; margin: 14px 0;
+    background: linear-gradient(135deg,
+        rgba(184,227,216,0.25) 0%,
+        rgba(255,255,255,0.6) 50%,
+        rgba(247,168,196,0.15) 100%);
+    border: 1.5px dashed {C_ACCENT_DUST};
+    border-radius: 22px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(4px);
 }}
-.mw-insight h4 {{ margin-top:0; font-size:13px; color:{C_ACCENT_DUST}; text-transform:uppercase; letter-spacing:.4px; }}
-.mw-insight ul {{ margin: 6px 0 0 0; padding-left: 18px; }}
-.mw-insight li {{ font-size: 13.5px; line-height: 1.7; color: {C_TEXT}; }}
+.mw-insight::before {{
+    content: '✦';
+    position: absolute; top: 16px; right: 20px;
+    font-size: 28px; color: {C_ACCENT_LT}; opacity: 0.6;
+    animation: starSpin 8s linear infinite;
+}}
+@keyframes starSpin {{
+    from {{ transform: rotate(0deg); }}
+    to {{ transform: rotate(360deg); }}
+}}
+.mw-insight h4 {{
+    margin-top: 0; font-size: 12px; color: {C_ACCENT_DUST};
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+}}
+.mw-insight ul {{ margin: 8px 0 0 0; padding-left: 20px; }}
+.mw-insight li {{
+    font-size: 13.5px; line-height: 1.8; color: {C_TEXT};
+    margin-bottom: 4px;
+}}
 
+/* ===== PIPELINE STEP ===== */
 .mw-step {{
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 16px;
-    padding: 14px 16px; text-align: center; height: 100%;
+    background: linear-gradient(160deg, #fff 0%, {C_CARD} 100%);
+    border: 1.5px solid {C_ACCENT_LT};
+    border-radius: 20px;
+    padding: 16px 14px;
+    text-align: center;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(247,168,196,0.1);
 }}
+.mw-step:hover {{
+    border-color: {C_ACCENT};
+    box-shadow: 0 8px 28px rgba(247,168,196,0.3);
+    transform: translateY(-4px);
+}}
+.mw-step::after {{
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, {C_ACCENT}, transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}}
+.mw-step:hover::after {{ opacity: 1; }}
 .mw-step .mw-step-no {{
-    font-family:'JetBrains Mono', monospace; font-size: 11px; color:{C_ACCENT_DUST};
-    background: {C_ACCENT_LT}; display:inline-block; padding:2px 9px; border-radius:999px; margin-bottom:6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #fff;
+    background: linear-gradient(135deg, {C_ACCENT}, {C_ACCENT_DUST});
+    display: inline-block; padding: 3px 11px; border-radius: 999px; margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(247,168,196,0.4);
 }}
-.mw-step .mw-step-title {{ font-family:'Fredoka',sans-serif; font-size:14px; color:{C_TEXT}; font-weight:600; }}
-.mw-step .mw-step-desc {{ font-size: 11.5px; color:{C_ACCENT_DUST}; margin-top:2px; }}
+.mw-step .mw-step-title {{ font-family: 'Fredoka', sans-serif; font-size: 14px; color: {C_TEXT}; font-weight: 600; }}
+.mw-step .mw-step-desc {{ font-size: 11px; color: {C_ACCENT_DUST}; margin-top: 4px; line-height: 1.5; }}
 
+/* ===== CODE BOX ===== */
 .mw-before-after {{
-    background: #fff; border: 1px solid {C_ACCENT_LT}; border-radius: 12px; padding: 10px 14px;
-    font-family:'JetBrains Mono', monospace; font-size: 12px; color:{C_TEXT}; word-break: break-word;
+    background: linear-gradient(135deg, #fff 0%, #FFF5F8 100%);
+    border: 1.5px solid {C_ACCENT_LT};
+    border-left: 4px solid {C_ACCENT};
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: {C_TEXT};
+    word-break: break-word;
+    box-shadow: 0 2px 12px rgba(247,168,196,0.1);
 }}
 
+/* ===== TRAFFIC LIGHT ===== */
 .mw-light-wrap {{
-    display: flex; align-items: center; justify-content: center; gap: 22px;
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 22px; padding: 22px;
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    background: linear-gradient(135deg, #fff 0%, {C_CARD} 100%);
+    border: 1.5px solid {C_ACCENT_LT};
+    border-radius: 26px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(247,168,196,0.18);
+    position: relative;
+    overflow: hidden;
 }}
-.mw-light {{ width: 46px; height: 46px; border-radius: 50%; opacity: 0.18; }}
-.mw-light.on-red    {{ background: {C_SOFTRED}; opacity: 1; box-shadow: 0 0 30px 8px rgba(244,166,166,0.65); animation: pulse 1.6s infinite; }}
-.mw-light.on-yellow {{ background: {C_PEACH}; opacity: 1; box-shadow: 0 0 30px 8px rgba(255,217,160,0.6); }}
-.mw-light.on-green  {{ background: {C_MINT}; opacity: 1; box-shadow: 0 0 26px 6px rgba(184,227,216,0.6); }}
-@keyframes pulse {{ 0%{{transform:scale(1);}} 50%{{transform:scale(1.12);}} 100%{{transform:scale(1);}} }}
+.mw-light-wrap::before {{
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg,
+        rgba(247,168,196,0.05),
+        rgba(184,227,216,0.05));
+}}
+.mw-light {{ width: 50px; height: 50px; border-radius: 50%; opacity: 0.15; transition: all 0.5s ease; }}
+.mw-light.on-red    {{
+    background: radial-gradient(circle at 35% 35%, #FF6B8A, {C_SOFTRED});
+    opacity: 1;
+    box-shadow: 0 0 30px 10px rgba(244,166,166,0.55), 0 0 60px 20px rgba(244,166,166,0.25);
+    animation: pulseRed 1.6s infinite;
+}}
+.mw-light.on-yellow {{
+    background: radial-gradient(circle at 35% 35%, #FFE066, {C_PEACH});
+    opacity: 1;
+    box-shadow: 0 0 28px 8px rgba(255,217,160,0.55), 0 0 50px 16px rgba(255,217,160,0.25);
+    animation: pulseYellow 2s infinite;
+}}
+.mw-light.on-green  {{
+    background: radial-gradient(circle at 35% 35%, #7EDECB, {C_MINT});
+    opacity: 1;
+    box-shadow: 0 0 26px 8px rgba(184,227,216,0.55), 0 0 46px 14px rgba(184,227,216,0.25);
+    animation: pulseGreen 2.5s infinite;
+}}
+@keyframes pulseRed {{
+    0%,100% {{ transform: scale(1); box-shadow: 0 0 30px 10px rgba(244,166,166,0.55); }}
+    50% {{ transform: scale(1.1); box-shadow: 0 0 40px 16px rgba(244,166,166,0.75); }}
+}}
+@keyframes pulseYellow {{
+    0%,100% {{ transform: scale(1); }}
+    50% {{ transform: scale(1.06); }}
+}}
+@keyframes pulseGreen {{
+    0%,100% {{ transform: scale(1); }}
+    50% {{ transform: scale(1.04); }}
+}}
+.mw-status-text {{
+    font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 21px;
+    color: {C_ACCENT_DUST}; text-align: center; margin-top: 12px;
+    letter-spacing: 0.5px;
+}}
 
-.mw-status-text {{ font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 20px; color: {C_ACCENT_DUST}; text-align: center; margin-top: 10px; }}
-
+/* ===== ALERT BANNER ===== */
 .mw-alert-banner {{
-    border-radius: 18px; padding: 16px 20px; margin: 14px 0;
-    background: linear-gradient(90deg, rgba(244,166,166,0.25), rgba(244,166,166,0.06));
-    border: 1px solid {C_SOFTRED}; font-size: 14px; line-height: 1.6; color: {C_TEXT};
+    border-radius: 20px; padding: 18px 24px; margin: 16px 0;
+    background: linear-gradient(90deg,
+        rgba(244,166,166,0.22),
+        rgba(255,217,160,0.12),
+        rgba(244,166,166,0.08));
+    border: 1.5px solid rgba(244,166,166,0.6);
+    font-size: 14px; line-height: 1.7; color: {C_TEXT};
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(244,166,166,0.18);
+}}
+.mw-alert-banner::before {{
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 5px; height: 100%;
+    background: linear-gradient(180deg, {C_SOFTRED}, {C_PEACH});
+    border-radius: 4px 0 0 4px;
 }}
 .mw-alert-banner b {{ color: #C9576E; }}
 
-div[data-testid="stMetricValue"] {{ color: {C_ACCENT_DUST} !important; font-family:'JetBrains Mono', monospace !important; }}
-div[data-testid="stMetric"] {{
-    background: {C_CARD}; border: 1px solid {C_ACCENT_LT}; border-radius: 16px; padding: 10px 14px;
+/* ===== METRICS ===== */
+div[data-testid="stMetricValue"] {{
+    color: {C_ACCENT_DUST} !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-weight: 700 !important;
 }}
-div[data-testid="stMetricLabel"] p {{ color: {C_ACCENT_DUST} !important; font-weight:600; }}
+div[data-testid="stMetric"] {{
+    background: linear-gradient(135deg, #fff 0%, {C_CARD} 100%);
+    border: 1.5px solid rgba(247,168,196,0.35);
+    border-radius: 20px;
+    padding: 14px 18px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(247,168,196,0.1);
+    position: relative; overflow: hidden;
+}}
+div[data-testid="stMetric"]::before {{
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, {C_ACCENT}, {C_MINT});
+    border-radius: 20px 20px 0 0;
+}}
+div[data-testid="stMetric"]:hover {{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(247,168,196,0.25);
+}}
+div[data-testid="stMetricLabel"] p {{ color: {C_ACCENT_DUST} !important; font-weight: 700 !important; }}
 
-.stTabs [data-baseweb="tab-list"] {{ gap: 6px; background: transparent; flex-wrap: wrap; }}
+/* ===== TABS ===== */
+.stTabs [data-baseweb="tab-list"] {{
+    gap: 6px; background: rgba(255,238,243,0.6);
+    border-radius: 18px; padding: 6px;
+    flex-wrap: wrap;
+    backdrop-filter: blur(8px);
+    border: 1px solid {C_ACCENT_LT};
+}}
 .stTabs [data-baseweb="tab"] {{
-    background: {C_CARD}; border-radius: 14px 14px 0 0; padding: 8px 16px; color: {C_ACCENT_DUST};
-    border: 1px solid {C_ACCENT_LT}; font-family: 'Quicksand', sans-serif; font-weight: 600;
+    background: transparent;
+    border-radius: 12px; padding: 8px 16px;
+    color: {C_ACCENT_DUST};
+    border: none !important;
+    font-family: 'Quicksand', sans-serif; font-weight: 700;
+    font-size: 13px;
+    transition: all 0.2s;
+}}
+.stTabs [data-baseweb="tab"]:hover {{
+    background: rgba(247,168,196,0.15);
 }}
 .stTabs [aria-selected="true"] {{
-    background: linear-gradient(90deg, {C_ACCENT}, {C_ACCENT_LT}) !important;
-    color: #fff !important; border-color: {C_ACCENT} !important;
+    background: linear-gradient(135deg, {C_ACCENT}, {C_ACCENT_DUST}) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(247,168,196,0.4) !important;
 }}
 
+/* ===== BUTTONS ===== */
 .stButton > button {{
     background: linear-gradient(135deg, {C_ACCENT}, {C_ACCENT_DUST});
-    color: white; border: none; border-radius: 14px;
-    font-family: 'Fredoka', sans-serif; font-weight: 600; padding: 8px 20px; transition: all 0.2s;
+    color: white; border: none; border-radius: 16px;
+    font-family: 'Fredoka', sans-serif; font-weight: 600;
+    padding: 10px 24px; transition: all 0.25s;
+    box-shadow: 0 4px 18px rgba(247,168,196,0.4);
+    letter-spacing: 0.3px;
 }}
 .stButton > button:hover {{
     background: linear-gradient(135deg, {C_ACCENT_DUST}, {C_ACCENT});
-    transform: translateY(-1px); box-shadow: 0 4px 18px rgba(232,147,181,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(232,147,181,0.5);
+}}
+.stButton > button:active {{
+    transform: translateY(0);
 }}
 
+/* ===== FORM ELEMENTS ===== */
 .stSelectbox > div > div, .stMultiSelect > div > div {{
-    background: #fff !important; border: 1px solid {C_ACCENT_LT} !important;
-    border-radius: 12px !important; color: {C_TEXT} !important;
+    background: #fff !important;
+    border: 1.5px solid {C_ACCENT_LT} !important;
+    border-radius: 14px !important;
+    color: {C_TEXT} !important;
+    box-shadow: 0 2px 8px rgba(247,168,196,0.1) !important;
 }}
 .stTextArea > div > div > textarea {{
-    background: #fff !important; border: 1px solid {C_ACCENT_LT} !important;
-    border-radius: 14px !important; color: {C_TEXT} !important;
+    background: #fff !important;
+    border: 1.5px solid {C_ACCENT_LT} !important;
+    border-radius: 16px !important;
+    color: {C_TEXT} !important;
+    box-shadow: 0 2px 12px rgba(247,168,196,0.1) !important;
+    font-family: 'Nunito', sans-serif !important;
+}}
+.stTextArea > div > div > textarea:focus {{
+    border-color: {C_ACCENT} !important;
+    box-shadow: 0 0 0 3px rgba(247,168,196,0.25) !important;
 }}
 [data-testid="stFileUploader"] {{
-    background: {C_CARD}; border: 1.5px dashed {C_ACCENT}; border-radius: 16px; padding: 12px;
+    background: linear-gradient(135deg, #fff 0%, {C_CARD} 100%);
+    border: 2px dashed {C_ACCENT};
+    border-radius: 20px;
+    padding: 16px;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(247,168,196,0.1);
+}}
+[data-testid="stFileUploader"]:hover {{
+    border-color: {C_ACCENT_DUST};
+    box-shadow: 0 8px 28px rgba(247,168,196,0.22);
 }}
 hr {{ border-color: {C_ACCENT_LT} !important; }}
-[data-testid="stDataFrame"] {{ border: 1px solid {C_ACCENT_LT} !important; border-radius: 14px !important; }}
-
-.mw-footer {{
-    margin-top: 30px; padding: 18px; border-radius: 18px; background: {C_CARD};
-    border: 1px solid {C_ACCENT_LT}; font-size: 12.5px; color: {C_ACCENT_DUST}; text-align: center;
+[data-testid="stDataFrame"] {{
+    border: 1.5px solid {C_ACCENT_LT} !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(247,168,196,0.1) !important;
 }}
 
-.mw-badge {{ display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; margin-right:6px; font-family:'Quicksand',sans-serif; }}
-.badge-urgent {{ background:rgba(244,166,166,0.3); color:#C9576E; border:1px solid {C_SOFTRED}; }}
-.badge-watch  {{ background:rgba(255,217,160,0.4); color:#B97A1E; border:1px solid {C_PEACH}; }}
-.badge-mild   {{ background:rgba(184,227,216,0.4); color:#2E8C76; border:1px solid {C_MINT}; }}
+/* ===== EXPANDER ===== */
+.streamlit-expanderHeader {{
+    background: linear-gradient(135deg, #fff 0%, {C_CARD} 100%) !important;
+    border: 1.5px solid {C_ACCENT_LT} !important;
+    border-radius: 16px !important;
+    font-family: 'Quicksand', sans-serif !important;
+    font-weight: 700 !important;
+    color: {C_TEXT} !important;
+}}
 
-.mw-mono-val {{ font-family:'JetBrains Mono', monospace; font-size: 13px; color:{C_TEXT}; }}
+/* ===== DIVIDER ===== */
+.mw-divider {{
+    display: flex; align-items: center; gap: 14px;
+    margin: 24px 0; opacity: 0.6;
+}}
+.mw-divider-line {{
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, {C_ACCENT_LT}, transparent);
+}}
+.mw-divider-icon {{
+    font-size: 16px;
+    color: {C_ACCENT};
+}}
 
+/* ===== STAT CHIP ===== */
+.mw-chip {{
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, rgba(247,168,196,0.2), rgba(251,196,216,0.3));
+    border: 1px solid {C_ACCENT_LT};
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: 12.5px; font-weight: 700;
+    color: {C_ACCENT_DUST};
+    font-family: 'Quicksand', sans-serif;
+    margin: 3px;
+}}
+
+/* ===== FOOTER ===== */
+.mw-footer {{
+    margin-top: 36px; padding: 22px 28px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, {C_CARD} 0%, rgba(184,227,216,0.2) 100%);
+    border: 1.5px solid {C_ACCENT_LT};
+    font-size: 13px; color: {C_ACCENT_DUST}; text-align: center;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(247,168,196,0.12);
+}}
+.mw-footer::before {{
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, {C_ACCENT}, {C_MINT}, {C_PEACH}, {C_ACCENT});
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+}}
+@keyframes shimmer {{
+    0% {{ background-position: 0% 0%; }}
+    100% {{ background-position: 200% 0%; }}
+}}
+
+/* ===== BADGES ===== */
+.mw-badge {{ display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; margin-right: 6px; font-family: 'Quicksand', sans-serif; }}
+.badge-urgent {{ background: rgba(244,166,166,0.25); color: #C9576E; border: 1px solid {C_SOFTRED}; }}
+.badge-watch  {{ background: rgba(255,217,160,0.35); color: #B97A1E; border: 1px solid {C_PEACH}; }}
+.badge-mild   {{ background: rgba(184,227,216,0.35); color: #2E8C76; border: 1px solid {C_MINT}; }}
+
+/* ===== MONO VALUE ===== */
+.mw-mono-val {{
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: {C_TEXT};
+    line-height: 2;
+}}
+
+/* ===== FILTER INFO ===== */
 .mw-filter-info {{
-    background: rgba(184,227,216,0.25); border: 1px solid {C_MINT};
-    border-radius: 14px; padding: 10px 16px; font-size: 13px;
-    color: {C_TEXT}; margin-bottom: 10px;
+    background: linear-gradient(135deg, rgba(184,227,216,0.3), rgba(184,227,216,0.1));
+    border: 1.5px solid {C_MINT};
+    border-radius: 18px; padding: 12px 18px; font-size: 13.5px;
+    color: {C_TEXT}; margin-bottom: 12px;
+    box-shadow: 0 4px 16px rgba(184,227,216,0.2);
+}}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {{ width: 6px; height: 6px; }}
+::-webkit-scrollbar-track {{ background: {C_BG}; border-radius: 4px; }}
+::-webkit-scrollbar-thumb {{
+    background: linear-gradient(180deg, {C_ACCENT}, {C_ACCENT_DUST});
+    border-radius: 4px;
+}}
+
+/* ===== SUCCESS / WARNING / INFO ===== */
+.stSuccess {{
+    background: rgba(184,227,216,0.25) !important;
+    border: 1.5px solid {C_MINT} !important;
+    border-radius: 16px !important;
+}}
+.stWarning {{
+    background: rgba(255,217,160,0.25) !important;
+    border: 1.5px solid {C_PEACH} !important;
+    border-radius: 16px !important;
+}}
+
+/* ===== SPARKLE DECO (sidebar) ===== */
+.mw-sidebar-deco {{
+    text-align: center; padding: 8px 0; font-size: 18px;
+    animation: floatEmoji 3s ease-in-out infinite;
+}}
+@keyframes floatEmoji {{
+    0%,100% {{ transform: translateY(0); }}
+    50% {{ transform: translateY(-6px); }}
+}}
+
+/* ===== RAINBOW BORDER ANIM ===== */
+.mw-rainbow-card {{
+    background: linear-gradient(#fff, #fff) padding-box,
+        linear-gradient(135deg, {C_ACCENT}, {C_MINT}, {C_PEACH}, {C_ACCENT_DUST}) border-box;
+    border: 2px solid transparent;
+    border-radius: 22px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+}}
+
+/* ===== PLOTLY CHART WRAPPER ===== */
+.js-plotly-plot {{
+    border-radius: 16px;
+    overflow: hidden;
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -509,32 +925,24 @@ def run_kmeans(texts, k=3):
     return labels, X_2d, km_final, list(k_range), wcss, sil, dbi, chi
 
 # ============================================================
-# ✅ ML CLASSIFIER — DIPERBAIKI SESUAI INSTRUKSI DOSEN
-# Perubahan:
-#   1. Filter @mention dilakukan SEBELUM fungsi ini dipanggil (di main flow)
-#   2. test_size=0.2 (pisah 80% latih / 20% uji)
-#   3. stratify wajib aktif agar proporsi label seimbang di kedua split
-#   4. TfidfVectorizer: max_features=2000, ngram_range=(1,2) untuk fitur lebih kaya
-#   5. class_weight='balanced' agar model tidak bias ke kelas mayoritas
+# ✅ ML CLASSIFIER
 # ============================================================
 @st.cache_data(show_spinner=False)
 def train_ml_classifier(texts, labels):
-    # --- Vectorizer dengan bigram untuk fitur lebih kaya ---
     vectorizer = TfidfVectorizer(
         max_features=2000,
-        ngram_range=(1, 2),   # unigram + bigram
-        min_df=2,             # abaikan kata yang muncul < 2 kali
-        sublinear_tf=True,    # log normalisasi TF
+        ngram_range=(1, 2),
+        min_df=2,
+        sublinear_tf=True,
     )
     X = vectorizer.fit_transform(texts)
     classes = sorted(set(labels))
 
-    # --- Stratified split: proporsi label SAMA di train & test ---
     can_stratify = len(classes) > 1 and all(labels.count(c) >= 2 for c in classes)
     try:
         X_train, X_test, y_train, y_test = train_test_split(
             X, labels,
-            test_size=0.2,          # 80% latih, 20% uji
+            test_size=0.2,
             random_state=42,
             stratify=labels if can_stratify else None,
         )
@@ -543,7 +951,6 @@ def train_ml_classifier(texts, labels):
             X, labels, test_size=0.2, random_state=42
         )
 
-    # --- Model dengan class_weight='balanced' agar tidak bias ke kelas mayoritas ---
     model = LogisticRegression(
         max_iter=1000,
         class_weight="balanced",
@@ -742,13 +1149,24 @@ def generate_sna_insight(G):
     ]
 
 # ============================================================
-# UI — HERO
+# UI — HERO (with floating blobs + animated dots)
 # ============================================================
 st.markdown("""
+<div class="mw-blob-wrap">
+  <div class="mw-blob mw-blob-1"></div>
+  <div class="mw-blob mw-blob-2"></div>
+  <div class="mw-blob mw-blob-3"></div>
+</div>
 <div class="mw-hero">
-  <span class="mw-eyebrow">Social Listening · Kesehatan Mental Gen Z</span>
+  <div class="mw-hero-dots">
+    <div class="mw-hero-dot"></div>
+    <div class="mw-hero-dot"></div>
+    <div class="mw-hero-dot"></div>
+    <div class="mw-hero-dot"></div>
+  </div>
+  <span class="mw-eyebrow">✦ Social Listening · Kesehatan Mental Gen Z ✦</span>
   <h1>🌷 MindWatch — Monitoring Isu Kesehatan Mental Gen Z</h1>
-  <p>Klasifikasi Urgensi · Klasterisasi & Trending Topic · Social Network Analysis (Support System)</p>
+  <p>Klasifikasi Urgensi &nbsp;·&nbsp; Klasterisasi &amp; Trending Topic &nbsp;·&nbsp; Social Network Analysis (Support System)</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -756,7 +1174,8 @@ st.markdown("""
 # SIDEBAR
 # ============================================================
 with st.sidebar:
-    st.markdown("### 🌸 Upload Dataset")
+    st.markdown('<div class="mw-sidebar-deco">🌸 🌷 🌸</div>', unsafe_allow_html=True)
+    st.markdown("### Upload Dataset")
     uploaded_file = st.file_uploader("Upload file CSV", type=["csv"])
     st.divider()
     st.markdown("### ⚙️ Parameter Analisis")
@@ -764,7 +1183,6 @@ with st.sidebar:
     n_clusters = st.slider("Jumlah Klaster K-Means:", 2, 6, 3)
     st.divider()
 
-    # ✅ INFO FILTER MENTION (BARU)
     st.markdown("### 🔍 Filter Data")
     st.markdown("""
     <div class="mw-filter-info">
@@ -782,6 +1200,7 @@ with st.sidebar:
                "• Klasifikasi: Butuh Pertolongan Segera vs Curhat Ringan\n"
                "• Klasterisasi & Trending Topic\n"
                "• SNA: jaringan akun pendukung")
+    st.markdown('<div class="mw-sidebar-deco">💗 🫶 💗</div>', unsafe_allow_html=True)
 
 # ============================================================
 # MAIN CONTENT
@@ -810,7 +1229,7 @@ if uploaded_file:
                                    index=(list(df_raw.columns).index(default_ts) + 1) if default_ts else 0)
             ts_col = None if ts_col == "(tidak ada)" else ts_col
 
-    # ✅ TERAPKAN FILTER MENTION (BARU — sesuai instruksi dosen)
+    # ✅ TERAPKAN FILTER MENTION
     n_before = len(df_raw)
     df = filter_mention(df_raw, text_col)
     n_removed = n_before - len(df)
@@ -889,9 +1308,9 @@ if uploaded_file:
     with col_light:
         st.markdown(f"""
         <div class="mw-light-wrap">
-          <div class="mw-light" style="background:{C_SOFTRED}; opacity:{1 if light_class=='on-red' else 0.15}; {'box-shadow:0 0 30px 8px rgba(244,166,166,0.65);animation:pulse 1.6s infinite;' if light_class=='on-red' else ''}"></div>
-          <div class="mw-light" style="background:{C_PEACH}; opacity:{1 if light_class=='on-yellow' else 0.15}; {'box-shadow:0 0 30px 8px rgba(255,217,160,0.6);' if light_class=='on-yellow' else ''}"></div>
-          <div class="mw-light" style="background:{C_MINT}; opacity:{1 if light_class=='on-green' else 0.15}; {'box-shadow:0 0 26px 6px rgba(184,227,216,0.6);' if light_class=='on-green' else ''}"></div>
+          <div class="mw-light" style="background:radial-gradient(circle at 35% 35%, #FF6B8A, {C_SOFTRED}); opacity:{1 if light_class=='on-red' else 0.12}; {'box-shadow:0 0 30px 10px rgba(244,166,166,0.55),0 0 60px 20px rgba(244,166,166,0.25);animation:pulseRed 1.6s infinite;' if light_class=='on-red' else ''}"></div>
+          <div class="mw-light" style="background:radial-gradient(circle at 35% 35%, #FFE066, {C_PEACH}); opacity:{1 if light_class=='on-yellow' else 0.12}; {'box-shadow:0 0 28px 8px rgba(255,217,160,0.55);animation:pulseYellow 2s infinite;' if light_class=='on-yellow' else ''}"></div>
+          <div class="mw-light" style="background:radial-gradient(circle at 35% 35%, #7EDECB, {C_MINT}); opacity:{1 if light_class=='on-green' else 0.12}; {'box-shadow:0 0 26px 8px rgba(184,227,216,0.55);animation:pulseGreen 2.5s infinite;' if light_class=='on-green' else ''}"></div>
         </div>
         <p class="mw-status-text">{status_text}</p>
         """, unsafe_allow_html=True)
@@ -1247,7 +1666,6 @@ if uploaded_file:
         st.subheader("🤖 ML Classifier — TF-IDF + Logistic Regression")
         st.caption(f"Model dilatih untuk memprediksi label **{LABEL_URGENT}** vs **{LABEL_RINGAN}** dari teks.")
 
-        # ✅ Tampilkan info split data
         st.markdown(f"""
         <div class="mw-filter-info">
         📊 <b>Pembagian Data:</b><br>
@@ -1295,7 +1713,6 @@ if uploaded_file:
                 fig_cm.update_layout(**PLOTLY_LAYOUT, coloraxis_showscale=False)
                 st.plotly_chart(fig_cm, use_container_width=True)
 
-            # ✅ Insight yang mencakup penjelasan F1
             insight_card("Insight Otomatis — ML Classifier", [
                 f"Model dilatih pada <b>{n_train} data</b> dan diuji pada <b>{n_test} data</b> (split 80/20 stratified).",
                 f"Akurasi: <b>{acc*100:.1f}%</b> | F1-Score makro: <b>{f1m:.3f}</b>.",
@@ -1422,15 +1839,17 @@ if uploaded_file:
 
     st.markdown(f"""
     <div class="mw-footer">
-    🌷 <b>MindWatch Dashboard</b> — Riset & Kesadaran Sosial Isu Kesehatan Mental Gen Z
+    🌷 <b>MindWatch Dashboard</b> — Riset &amp; Kesadaran Sosial Isu Kesehatan Mental Gen Z
+    <br><span style="font-size:11px; opacity:0.7;">Made with 💗 · Social Listening · NLP · Machine Learning</span>
     </div>
     """, unsafe_allow_html=True)
 
 else:
     st.markdown("""
-    <div class="mw-card" style="text-align:center; padding:40px;">
-    <h4>👈 Mulai dengan Upload Dataset CSV</h4>
-    <p style="font-size:14.5px; max-width:600px; margin: 12px auto;">
+    <div class="mw-card" style="text-align:center; padding:48px; max-width:700px; margin: 0 auto;">
+    <div style="font-size:48px; margin-bottom:16px; animation: floatEmoji 3s ease-in-out infinite;">🌷</div>
+    <h4 style="font-size:20px;">👈 Mulai dengan Upload Dataset CSV</h4>
+    <p style="font-size:14.5px; max-width:560px; margin: 12px auto; color:#A07090;">
     Upload file CSV hasil scraping Twitter/X.<br>
     Disarankan memiliki kolom: <b>full_text</b>, <b>username</b>, <b>in_reply_to_screen_name</b>, <b>created_at</b>
     </p>
@@ -1448,5 +1867,7 @@ else:
             <p style="font-size:13px;">{desc}</p></div>""", unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="mw-footer">🌷 <b>MindWatch Dashboard</b></div>
+    <div class="mw-footer">🌷 <b>MindWatch Dashboard</b>
+    <br><span style="font-size:11px; opacity:0.7;">Made with 💗 · Social Listening · NLP · Machine Learning</span>
+    </div>
     """, unsafe_allow_html=True)
